@@ -1,22 +1,6 @@
-import {google} from 'googleapis';
+'use client';
 
-async function callSheets() {
-
-  
-  // Create a new Sheets API client.
-  const sheets = google.sheets({version: 'v4', auth});
-  // Get the values from the spreadsheet.
-  const result = await sheets.spreadsheets.values.get({
-    spreadsheetId: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms',
-    range: 'Class Data!A2:E',
-  });
-  const rows = result.data.values;
-  if (!rows || rows.length === 0) {
-    console.log('No data found.');
-    return;
-  }
-}
-
+import { callSheets } from "./backend";
 
 
 export default function Sheets() {

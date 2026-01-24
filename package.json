@@ -9,7 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@google-cloud/local-auth": "^2.1.0",
     "@google/genai": "^1.38.0",
+    "google-spreadsheet": "^5.0.2",
     "googleapis": "^170.1.0",
     "next": "16.1.4",
     "react": "19.2.3",
