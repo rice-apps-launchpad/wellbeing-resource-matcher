@@ -2,17 +2,11 @@
 
 import {google} from 'googleapis';
 
-// import { GoogleSpreadsheet } from 'google-spreadsheet'
-
-// OUR API KEY : AIzaSyBmY9HxIXGtTEXCm2HKzjlUtlXuNwTsGws
-
-const apiKey = 'AIzaSyBmY9HxIXGtTEXCm2HKzjlUtlXuNwTsGws';
-
 export async function callSheets() {
   'use server';
 
   // Create a new Sheets API client.
-  const sheets = google.sheets({version: 'v4', auth: apiKey});
+  const sheets = google.sheets({version: 'v4', auth: process.env.SHEETS_API_KEY});
 
   // Get the values from the spreadsheet.
   
@@ -29,6 +23,8 @@ export async function callSheets() {
     return [];
   }
   console.log(vals);
+
+  return vals;
 
 
   // if (vals && vals.length) {

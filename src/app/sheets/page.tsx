@@ -1,15 +1,28 @@
 'use client';
 
-import { callSheets } from "./backend";
+import {callSheets} from "./backend";
+import {useState} from "react";
 
 
 export default function Sheets() {
+  const [sheetsOutputText, setSheetsOutputText] = useState<string>("")
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <button onClick={callSheets}>
-          Click me
+      <main
+        className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
+        <button onClick={() => {
+          callSheets().then(value => {
+            console.log("XXX———XXX")
+            setSheetsOutputText(value.toString());
+          })
+        }}>
+          Call Google Sheets API by clicking me :)
         </button>
+        {/* Sheets output below: */}
+        <div>
+          {sheetsOutputText}
+        </div>
       </main>
     </div>
   );
