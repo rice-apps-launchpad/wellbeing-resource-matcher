@@ -2,8 +2,8 @@
 Represents who the messasge is coming from (for blue or grey bubble)
  */
 export enum Sender {
-  user,
-  server,
+  user, // 0 
+  server, // 1
 }
 
 /*
