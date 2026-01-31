@@ -1,13 +1,12 @@
 'use server';
 
 import { GoogleGenAI } from "@google/genai";
-// import { callSheets } from "./sheets/backend";
 
 // The client gets the API key from the environment variable `GEMINI_API_KEY`.
-const ai = new GoogleGenAI({apiKey: "AIzaSyBl2rnE0ZS2ObgA6NeWFqrEZzk_mPTXkcQ"});
+const ai = new GoogleGenAI({});
 
 //define server function
-export async function generateResponse(input: String) {
+export async function generateResponse(input: string) {
   'use server'
 
   const response = await ai.models.generateContent({
@@ -19,7 +18,7 @@ export async function generateResponse(input: String) {
   return response.text;
 }
 
-function callSheets(): String {
+function callSheets(): string {
   return `Category,Resource Name,Website,Contact Email,Contact phone,Location,Description,Scheduling link?,Issue Key,Key words,Link to FAQ or About Page
 Academic,General Announcements (GA),https://ga.rice.edu/,,,,"Rice University's official catalog of courses, degrees, policies, and curricular requirements",,Academic Decisions,Course/degree policies and requirements,
 Academic,Office of the Registrar,https://registrar.rice.edu/,registrar@rice.edu,713-348-4999,116 Allen Center,"The Office of the Registrar at Rice University supports the educational mission of the university by working with the Rice community to maintain the accuracy and integrity of its educational records, provide quality service, and support innovative systems that enhance academic support.",,Academic Decisions,"Academic Calendars
@@ -149,11 +148,11 @@ Students can request assistance via the OIT Help Desk about account management, 
 Campus Bookstore,Rice University Official Bookstore,http://www.bkstr.com/riceuniversitystore/home/en,,713-348-2039,,"Located on the first and basement levels of the Rice Memorial Center, the Rice Bookstore is a convenient stop for textbooks, memorabilia, and clothing and accessories to support Rice or your College.",,,,`;
 }
 
-export async function matchKeywords(userInput: String) {
+export async function matchKeywords(userInput: string) {
   'use server'
 
   // Download resource spreadsheet
-  let entireSpreadsheet: String = callSheets();
+  const entireSpreadsheet: string = callSheets();
 
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",

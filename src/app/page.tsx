@@ -1,40 +1,15 @@
-'use client';
-
-import { generateResponse, matchKeywords } from "./backend";
-import { useState } from "react";
-
-async function callAi(input: String) {
-  generateResponse(input);
-}
+import Link from "next/dist/client/link";
 
 export default function Home() {
-  let [textInput, setTextInput] = useState("");
-
   return (
-    <div className="">
-      <main className="">
-
-
-        <input onChange={
-          (event) => {
-            setTextInput(event.target.value)
-          }} />
-        <button onClick={() => {
-          callAi(textInput);
-        }}>Submit</button>
-
-
-        <input onChange={
-          (event) => {
-            setTextInput(event.target.value)
-          }} />
-        <button onClick={() => {
-          matchKeywords(textInput);
-        }}>Input</button>
-
-
+    <div className={"flex justify-center"}>
+      <main>
+        <h1>Home</h1>
+        <ul>
+          <li><Link className={"text-blue-500 underline"} href={"/ai"}>Gemini AI</Link></li>
+          <li><Link className={"text-blue-500 underline"} href={"/sheets"}>Google Sheets</Link></li>
+        </ul>
       </main>
     </div>
-  );
+  )
 }
-
