@@ -1,6 +1,20 @@
 'use server';
 
 import {google} from 'googleapis';
+import {GoogleAuth} from 'google-auth-library';
+import fetch from 'node-fetch';
+
+
+// function formatStringAs2DStringArray(input: string): string[][] {
+//   // Split the string by newline to get rows
+//   const rows: string[] = input.split('\n');
+
+//   // Map each row string to an array of strings by splitting on commas
+//   const twoDArray: string[][] = rows.map(row => row.split('\t'));
+
+//   return twoDArray;
+// }
+
 
 export async function callSheets() {
   'use server';
@@ -11,8 +25,8 @@ export async function callSheets() {
   // Get the values from the spreadsheet.
   
   const result = await sheets.spreadsheets.values.get({
-    spreadsheetId: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms',
-    range: 'Class Data!A2:E',
+    spreadsheetId: '18HFumdaN6zCrMegt-tI-PODEHRkhQxiqtSCC2Gu22r4',
+    range: 'On Campus Resources!A2:K',
   });
 
 
@@ -22,42 +36,96 @@ export async function callSheets() {
     console.log('No data found.');
     return [];
   }
-  console.log(vals);
+  //console.log(vals);
+  //console.log("test");
 
-  return vals;
+  
+  const response = await fetch('https://docs.google.com/spreadsheets/d/18HFumdaN6zCrMegt-tI-PODEHRkhQxiqtSCC2Gu22r4/gviz/tq?tqx=out:csv&sheet=On%20Campus%20Resources');
 
 
-  // if (vals && vals.length) {
-  //   vals.forEach((vals) => {
-  //     console.log(`${vals[0]}`); //GETTING FIRST COLUMN
-  //   });
 
-  //   //GETTING ALL ROWS
-  //   for (let i = 0; i <30; i++){
-  //     console.log(`${vals[i]}`);
-  //   }
+  // // Create a new Drive API client (v3).
+  // const service = google.drive({version: 'v3', auth});
 
-    
+  // // Download the file.
+  // const file = await service.files.export({
+  //   fileID,
+  //   mimeType: 'application/csv',
+  // });
 
-  // } else {
-  //   console.log('No data found.');
-  // }
-  // return;
+  // // Print the status of the download.
+  // console.log(file);
 
-//   if (vals && vals.length) {
-//     vals.forEach((vals[0]=="Female") => {
-//       console.log(`${vals[0]}`); //GETTING FIRST COLUMN
-//     });
+  // return file;
 
-//     //GETTING ALL ROWS
-//     for (let i = 0; i <30; i++){
-//       console.log(`${vals[i]}`);
-//     }
+  console.log(await response.text())
+  return vals
 
-    
-
-//   } else {
-//     console.log('No data found.');
-//   }
-//   return;
 }
+
+
+  // const headers = [
+  //   'Category',
+  //   'Resource Name',
+  //   'Website',	
+  //   'Contact',
+  //   'Email',
+  //   'Contact phone',
+  //   'Location',
+  //   'Description',
+  //   'Scheduling link?',
+  //   'Issue Key',
+  //   'Key words',
+  //   'Link to FAQ or About Page'																					
+  // ];
+
+  // const undefVal = (value: string | undefined | null): string => {
+  //   if (value === undefined || value === null) {
+  //     return '';
+  //   }
+    
+  //   const stringValue = String(value);
+  
+  //   // Check if value contains special CSV characters
+  //   if (
+  //     stringValue.includes(',') || 
+  //     stringValue.includes('"') || 
+  //     stringValue.includes('\n') || 
+  //     stringValue.includes('\r')
+  //   ) {
+  //     // Escape double quotes by doubling them (" -> "")
+  //     return `"${stringValue.replace(/"/g, '""')}"`;
+  //   }
+    
+  //   return stringValue;
+  // };
+
+  // const generateCsv = (data: (string | undefined)[][]): string => {
+  //   const csvRows = [headers.join(',')];
+  
+  //   for (const row of data) {
+  //     // Map headers to row values (handles rows that might be shorter than headers)
+  //     const formattedRow = headers.map((_, index) => {
+  //       const cellValue = row[index];
+  //       return undefVal(cellValue);
+  //     });
+      
+  //     csvRows.push(formattedRow.join(','));
+  //   }
+  
+  //   return csvRows.join('\n');
+  // };
+  
+
+  
+
+
+
+  //console.log(csvString);
+  //const filePath: string = 'output.csv';
+
+  //return csvString;
+  
+
+//copy: 18HFumdaN6zCrMegt-tI-PODEHRkhQxiqtSCC2Gu22r4
+//original: 1XRGX2w3j4ufXP56XDwhtm9eG2Fx8EXxIwcx7V5xzdFY
