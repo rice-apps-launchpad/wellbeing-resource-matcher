@@ -6,7 +6,7 @@ const styles = {
       maxWidth: "200px",
       display: "inline-block",
       borderRadius: "10px",
-      padding: "4px",
+      padding: "8px",
       overflowWrap: "break-word",
     },
 
