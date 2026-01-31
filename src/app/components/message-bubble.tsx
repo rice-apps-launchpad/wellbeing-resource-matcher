@@ -1,4 +1,4 @@
-import {ChatMessage} from "@/data/chat-message";
+import {ChatMessage, Sender} from "@/data/chat-message";
 
 const styles = {
   // bubble
@@ -28,16 +28,18 @@ interface MessageBubbleProps {
 }
 
 export default function MessageBubble(props: MessageBubbleProps) {
-  return (
-    <div>
+  if (props.message.sender === Sender.user) {
+    return (
     <div style={{...styles.bubble, ...styles.userBubble}}>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt?
+      {props.message.message}
     </div>
+    ); 
+  } else {
+    // grey bubble
+    return (
     <div style={{...styles.bubble, ...styles.aiBubble}}>
-      Sed ut perspiciatis unde omnis iste natus error sit voluptatem: 
-      Office of Academic Advising. 
-      udantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi.
+      {props.message.message}
     </div>
-    </div>
-  );
+    );
+  }
 }
