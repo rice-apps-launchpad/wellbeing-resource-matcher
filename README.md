@@ -37,4 +37,4 @@ and then update with any changes that came from the server:
 git pull
 ```
 
-Done! You're ready to create a new branch from this point and restart the process.
+Done! You're ready to create a new branch from this point and restart the process. 
