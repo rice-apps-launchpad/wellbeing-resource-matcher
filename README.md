@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
 ## Getting Started
 
 First, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# How to create a branch
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Start with this command to clone the repository:
+```sh
+git clone https://github.com/rice-apps-launchpad/wellbeing-resource-matcher.git
+```
 
-## Learn More
+By default, you will be on the branch called `main`. When you want to make an edit to the app, you should **create a new branch**:
 
-To learn more about Next.js, take a look at the following resources:
+```sh
+git checkout -b NEW_BRANCH_NAME
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Then go ahead and make your changes! Every so often you should use VSCode's inbuilt UI to **commit** and **push** your changes to your branch. You can commit and push to your own branch as many times as you want—save your work!
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+When your task is complete, let Omar know and I will review your branch and create a **pull-request**.
 
-## Deploy on Vercel
+If you want to start a new feature, switch back to main with:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```sh
+git checkout main
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+and then update with any changes that came from the server:
+
+```sh
+git pull
+```
+
+Done! You're ready to create a new branch from this point and restart the process.
