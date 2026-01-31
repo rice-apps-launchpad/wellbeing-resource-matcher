@@ -1,7 +1,7 @@
 /*
 Represents who the messasge is coming from (for blue or grey bubble)
  */
-enum Sender {
+export enum Sender {
   user,
   server,
 }
@@ -9,7 +9,7 @@ enum Sender {
 /*
 Represents a single chat message
  */
-interface ChatMessage {
+export interface ChatMessage {
   sender: Sender;
   message: string;
 }
