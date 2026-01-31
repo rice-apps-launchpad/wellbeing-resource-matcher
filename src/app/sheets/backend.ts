@@ -1,8 +1,22 @@
 'use server';
 
 import {google} from 'googleapis';
+import fetch from 'node-fetch';
 
-export async function callSheets() {
+
+
+// function formatStringAs2DStringArray(input: string): string[][] {
+//   // Split the string by newline to get rows
+//   const rows: string[] = input.split('\n');
+
+//   // Map each row string to an array of strings by splitting on commas
+//   const twoDArray: string[][] = rows.map(row => row.split('\t'));
+
+//   return twoDArray;
+// }
+
+
+export async function callSheets(): Promise<string> {
   'use server';
 
   // Create a new Sheets API client.
@@ -11,53 +25,46 @@ export async function callSheets() {
   // Get the values from the spreadsheet.
   
   const result = await sheets.spreadsheets.values.get({
-    spreadsheetId: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms',
-    range: 'Class Data!A2:E',
+    spreadsheetId: '18HFumdaN6zCrMegt-tI-PODEHRkhQxiqtSCC2Gu22r4',
+    range: 'On Campus Resources!A2:K',
   });
 
 
   const vals = result.data.values;
 
-  if (!vals || vals.length === 0) {
-    console.log('No data found.');
-    return [];
-  }
-  console.log(vals);
-
-  return vals;
-
-
-  // if (vals && vals.length) {
-  //   vals.forEach((vals) => {
-  //     console.log(`${vals[0]}`); //GETTING FIRST COLUMN
-  //   });
-
-  //   //GETTING ALL ROWS
-  //   for (let i = 0; i <30; i++){
-  //     console.log(`${vals[i]}`);
-  //   }
-
-    
-
-  // } else {
+  // if (!vals || vals.length === 0) {
   //   console.log('No data found.');
+  //   return null;
   // }
-  // return;
+  //console.log(vals);
+  //console.log("test");
 
-//   if (vals && vals.length) {
-//     vals.forEach((vals[0]=="Female") => {
-//       console.log(`${vals[0]}`); //GETTING FIRST COLUMN
-//     });
+  
+  const response = await fetch('https://docs.google.com/spreadsheets/d/18HFumdaN6zCrMegt-tI-PODEHRkhQxiqtSCC2Gu22r4/gviz/tq?tqx=out:csv&sheet=On%20Campus%20Resources');
 
-//     //GETTING ALL ROWS
-//     for (let i = 0; i <30; i++){
-//       console.log(`${vals[i]}`);
-//     }
 
-    
 
-//   } else {
-//     console.log('No data found.');
-//   }
-//   return;
+  // // Create a new Drive API client (v3).
+  // const service = google.drive({version: 'v3', auth});
+
+  // // Download the file.
+  // const file = await service.files.export({
+  //   fileID,
+  //   mimeType: 'application/csv',
+  // });
+
+  // // Print the status of the download.
+  // console.log(file);
+
+  // return file;
+
+  const sheets_text = await response.text();
+
+  console.log(sheets_text)
+  return sheets_text
+
 }
+
+
+//copy: 18HFumdaN6zCrMegt-tI-PODEHRkhQxiqtSCC2Gu22r4
+//original: 1XRGX2w3j4ufXP56XDwhtm9eG2Fx8EXxIwcx7V5xzdFY
