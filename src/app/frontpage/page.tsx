@@ -1,19 +1,14 @@
-// blue bubble component for user response
+import MessageBubble from "@/components/message-bubble";
+import {Sender} from "@/data/chat-message";
 
-const styles = {
-    bubble: {
-        height: "300px",
-        width: "300px",
-        border: "solid 1px blue" ,
-    },
-}
 
-// 
-export default function MessageBubble() {
-  // Add message bubble exponent on screen
+export default function TestPage() {
   return (
     <div>
-      Hello
+      <MessageBubble message={{message: "This is a test from a user", sender: Sender.user}}/>
+      <MessageBubble message={{message: "This is a test from a server", sender: Sender.server}}/>
     </div>
-  );
+  )
 }
+
+
