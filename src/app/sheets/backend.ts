@@ -1,6 +1,5 @@
 'use server';
 
-import {google} from 'googleapis';
 import fetch from 'node-fetch';
 
 
@@ -19,7 +18,10 @@ import fetch from 'node-fetch';
 export async function callSheets(): Promise<string> {
   'use server';
 
-  // Create a new Sheets API client.
+  // The below code is commented out — we are using a different URL route below
+  // to download a CSV of the entire sheet to pass into the AI.
+
+  /*// Create a new Sheets API client.
   const sheets = google.sheets({version: 'v4', auth: process.env.SHEETS_API_KEY});
 
   // Get the values from the spreadsheet.
@@ -32,17 +34,12 @@ export async function callSheets(): Promise<string> {
 
   const vals = result.data.values;
 
-  // if (!vals || vals.length === 0) {
-  //   console.log('No data found.');
-  //   return null;
-  // }
-  //console.log(vals);
-  //console.log("test");
-
-  
-  const response = await fetch('https://docs.google.com/spreadsheets/d/18HFumdaN6zCrMegt-tI-PODEHRkhQxiqtSCC2Gu22r4/gviz/tq?tqx=out:csv&sheet=On%20Campus%20Resources');
-
-
+  if (!vals || vals.length === 0) {
+    console.log('No data found.');
+    return null;
+  }
+  console.log(vals);
+  console.log("test");*/
 
   // // Create a new Drive API client (v3).
   // const service = google.drive({version: 'v3', auth});
@@ -58,11 +55,10 @@ export async function callSheets(): Promise<string> {
 
   // return file;
 
+  const response = await fetch('https://docs.google.com/spreadsheets/d/18HFumdaN6zCrMegt-tI-PODEHRkhQxiqtSCC2Gu22r4/gviz/tq?tqx=out:csv&sheet=On%20Campus%20Resources');
   const sheets_text = await response.text();
 
-  console.log(sheets_text)
   return sheets_text
-
 }
 
 
