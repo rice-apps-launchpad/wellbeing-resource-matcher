@@ -1,4 +1,4 @@
-import MessageBubble from "@/app/components/message-bubble";
+import MessageBubble from "@/components/message-bubble";
 import {Sender} from "@/data/chat-message";
 
 
