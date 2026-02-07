@@ -1,8 +1,7 @@
 const styles = {
   card: {
-    width: "527px",
-    height: "381px",
-    marigin: "0 auto",
+    width: "80%",
+    height: "250px",
     borderRadius: "40px",
     overflow: "hidden",
     display: "flex" as "flex",
@@ -12,7 +11,8 @@ const styles = {
   },
 
   imageContainer: {
-    width: "100%",
+    // changed width
+    width: "80%",
     overflow: "hidden",
     display: "flex" as "flex",
     alignItems: "center",
@@ -34,8 +34,8 @@ const styles = {
 
   title: {
     color: "white",
-    fontSize: "40px",
-    marginTop: "25px",
+    fontSize: "20px",
+    marginTop: "15px",
     marginLeft:"25px",
     marginRight:"25px", 
     fontFamily: "serif",
@@ -45,7 +45,7 @@ const styles = {
 
   description: {
     color: "white",
-    fontSize: "23px",
+    fontSize: "15px",
     textDecoration: "underline",
     marginBottom: "25px",
     marginLeft:"25px",
