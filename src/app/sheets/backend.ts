@@ -1,5 +1,6 @@
 'use server';
 
+import { google } from 'googleapis';
 import fetch from 'node-fetch';
 
 
@@ -14,6 +15,40 @@ import fetch from 'node-fetch';
 //   return twoDArray;
 // }
 
+/*
+[
+ [Name: string,  url: string],
+ [Name: string,  url: string],
+ [Name: string,  url: string],
+ [Name: string,  url: string],
+ [Name: string,  url: string],
+]
+*/
+
+type SheetData = SheetItem[];
+type SheetItem = [name: string, url: string];
+
+export async function loadNameandURL(): Promise<SheetData> {
+  'use server';
+
+  const sheets = google.sheets({version: 'v4', auth: process.env.SHEETS_API_KEY});
+
+  // Get the values from the spreadsheet.
+  
+  const result = await sheets.spreadsheets.values.get({
+    spreadsheetId: '18HFumdaN6zCrMegt-tI-PODEHRkhQxiqtSCC2Gu22r4',
+    range: 'On Campus Resources!B2:C',
+  });
+
+  const ourData = result.data.values as SheetData
+  console.log(ourData[0])
+  for (const data of ourData) {
+    console.log(data[0])
+    console.log(data[1])
+    console.log('———')
+  }
+  return ourData
+}
 
 export async function callSheets(): Promise<string> {
   'use server';
@@ -21,8 +56,8 @@ export async function callSheets(): Promise<string> {
   // The below code is commented out — we are using a different URL route below
   // to download a CSV of the entire sheet to pass into the AI.
 
-  /*// Create a new Sheets API client.
-  const sheets = google.sheets({version: 'v4', auth: process.env.SHEETS_API_KEY});
+ //* Create a new Sheets API client.
+ /*  const sheets = google.sheets({version: 'v4', auth: process.env.SHEETS_API_KEY});
 
   // Get the values from the spreadsheet.
   
@@ -39,7 +74,7 @@ export async function callSheets(): Promise<string> {
     return null;
   }
   console.log(vals);
-  console.log("test");*/
+  console.log("test"); */
 
   // // Create a new Drive API client (v3).
   // const service = google.drive({version: 'v3', auth});

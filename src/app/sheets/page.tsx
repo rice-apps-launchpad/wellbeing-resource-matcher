@@ -1,6 +1,6 @@
 'use client';
 
-import {callSheets} from "./backend";
+import {callSheets, loadNameandURL} from "./backend";
 import {useState} from "react";
 
 
@@ -18,6 +18,11 @@ export default function Sheets() {
           })
         }}>
           Call Google Sheets API by clicking me :)
+        </button>
+        <button onClick={() => {
+          loadNameandURL()
+        }}>
+          serena:
         </button>
         {/* Sheets output below: */}
         <div>
