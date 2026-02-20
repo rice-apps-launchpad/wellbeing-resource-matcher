@@ -6,7 +6,7 @@ automatically.
 
 import {useRef, useState} from "react";
 import {ChatMessage, Sender} from "@/data/chat-message";
-import MessageBubble from "@/app/components/message-bubble";
+import MessageBubble from "@/components/message-bubble";
 
 export default function ChatPage() {
   const chatInputRef = useRef<HTMLInputElement>(null);
