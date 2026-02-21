@@ -1,8 +1,6 @@
 'use server';
 
 import { GoogleGenAI } from "@google/genai";
-import { string, z } from "zod";
-import { zodToJsonSchema } from "zod-to-json-schema";
 import { callSheets } from "@/app/sheets/backend";
 
 // The client gets the API key from the environment variable `GEMINI_API_KEY`.
