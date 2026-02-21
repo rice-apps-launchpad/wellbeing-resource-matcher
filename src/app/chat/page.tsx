@@ -56,7 +56,7 @@ export default function ChatPage() {
                  matchKeywords(inputRef.value).then((response) => {
                   if(response.match == null){
                     setMessages(prevState => [...prevState, {message: response.follow_up_question, sender: Sender.server}]);
-                    //take prev
+                    //take prevState, iterate through variable, and put as input back into AI
                   } else {
                     setMessages(prevState => [...prevState, {message: `Resource found: ${response.match.resource_name}`, sender: Sender.server}]);
                     //terminate chat here
