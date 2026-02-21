@@ -51,7 +51,7 @@ export async function matchKeywords(userInput: string) {
         description: "Whether a resource was found or more info is needed."
       },
       follow_up_question: {
-        type: "INTEGER",
+        type: "STRING",
         description: "The specific question to ask the user if status is NEEDS_CLARIFICATION",
         nullable: true,
       },
@@ -106,9 +106,9 @@ const response = await ai.models.generateContent({
   }
 
   try {
-    const match = JSON.parse(response.text);
-    console.log("Parsed Match:", match);
-    return match;
+    const responseJson = JSON.parse(response.text);
+    console.log("Parsed Match:", responseJson);
+    return responseJson;
   } catch (e) {
     console.error("Failed to parse JSON:", e);
     return null;

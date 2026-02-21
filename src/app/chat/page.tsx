@@ -54,13 +54,23 @@ export default function ChatPage() {
 
                  // Generate response
                  matchKeywords(inputRef.value).then((response) => {
-                  setMessages(prevState => [...prevState, {message: response.resource_name, sender: Sender.server}]);
-                  console.log(response)    
-                 });
-                                 
+                  if(response.match == null){
+                    setMessages(prevState => [...prevState, {message: response.follow_up_question, sender: Sender.server}]);
+                    //take prev
+                  } else {
+                    setMessages(prevState => [...prevState, {message: `Resource found: ${response.match.resource_name}`, sender: Sender.server}]);
+                    //terminate chat here
+                    
+                  }
+
+                  //console.log("RESPONSE" + response.match.resource_name) 
+
+                 });             
                  
                }
              }}/>
     </div>
   )
 }
+
+
