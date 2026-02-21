@@ -1,4 +1,4 @@
-'use client';
+'use client'; // double check this
 /*
 This will be the "chat" page for both desktop and mobile! It can take infinitely many messages and scrolls
 automatically.
@@ -7,6 +7,7 @@ automatically.
 import {useEffect, useRef, useState} from "react";
 import {ChatMessage, Sender} from "@/data/chat-message";
 import MessageBubble from "@/components/message-bubble";
+import {matchKeywords} from "@/app/ai/backend";
 
 export default function ChatPage() {
   const chatInputRef = useRef<HTMLInputElement>(null);
@@ -50,6 +51,14 @@ export default function ChatPage() {
                  }
                  // "Submit" the message
                  setMessages(prevState => [...prevState, {message: inputRef.value, sender: Sender.user}]);
+
+                 // Generate response
+                 matchKeywords(inputRef.value).then((response) => {
+                  setMessages(prevState => [...prevState, {message: response.resource_name, sender: Sender.server}]);
+                  console.log(response)    
+                 });
+                                 
+                 
                }
              }}/>
     </div>

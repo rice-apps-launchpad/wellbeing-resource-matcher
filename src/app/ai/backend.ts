@@ -13,7 +13,7 @@ export async function generateResponse(input: string) {
   'use server'
 
   const response = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
+    model: "gemini-3-flash",
     contents: `${input}`,
   });
   console.log(response.text);
@@ -63,7 +63,7 @@ export async function matchKeywords(userInput: string) {
   const entireSpreadsheet: string = await callSheets();
 
   const keyword = await ai.models.generateContent({
-    model: "gemini-2.5-flash-lite-preview-09-2025",
+    model: "gemini-2.5-flash-lite",
     contents: `The following is the user's input to our application: ${userInput}
     
     Please match the user input with a category from the following spreadsheet: ${entireSpreadsheet}
@@ -78,7 +78,7 @@ export async function matchKeywords(userInput: string) {
 
 
   const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash-preview-09-2025",
+    model: "gemini-2.5-flash",
     contents: `The following is the user's input to our application: ${userInput}
     
     Please match the user input with a resource of the category ${keyword.text} from the following spreadsheet: ${entireSpreadsheet}
@@ -97,7 +97,7 @@ export async function matchKeywords(userInput: string) {
   try {
     const match = JSON.parse(response.text);
     console.log("Parsed Match:", match);
-    return response.text;
+    return match;
   } catch (e) {
     console.error("Failed to parse JSON:", e);
     return null;
