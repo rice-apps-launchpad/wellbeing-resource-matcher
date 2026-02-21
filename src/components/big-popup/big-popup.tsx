@@ -1,5 +1,10 @@
 import React from 'react';
 import Image from 'next/image';
+import {Inter, Noto_Serif} from 'next/font/google';
+
+// https://nextjs.org/docs/app/getting-started/fonts
+const inter = Inter({ subsets: ['latin'] });
+const notoSerif = Noto_Serif({ subsets: ['latin'] });
 
 const styles = {
     card: {
@@ -39,7 +44,6 @@ const styles = {
     },
     title: {
         fontSize: "3.5rem", 
-        fontFamily: "serif",
         fontWeight: "bold",
         marginBottom: "24px",
         lineHeight: "1.1",
@@ -82,11 +86,11 @@ export default function BigPopup({
                    {matchText}
                </p>
                
-               <h1 style={styles.title}>
+               <h1 className={notoSerif.className} style={styles.title}>
                    {title}
                </h1>
                
-               <p style={styles.description}>
+               <p className={inter.className} style={styles.description}>
                    {description}
                </p>
            </div>

@@ -1,9 +1,14 @@
 import Image from 'next/image';
+import {Inter, Noto_Serif} from 'next/font/google';
+
+// https://nextjs.org/docs/app/getting-started/fonts
+const inter = Inter({ subsets: ['latin'] });
+const notoSerif = Noto_Serif({ subsets: ['latin'] });
 
 const styles = {
   card: {
     width: "100%",
-    borderRadius: "40px",
+    borderRadius: "25px",
     overflow: "hidden",
     display: "flex",
     flexDirection: "column",
@@ -13,7 +18,7 @@ const styles = {
 
   imageContainer: {
     width: "100%",
-    aspectRatio: "16 / 9",
+    aspectRatio: "3 / 1",
     overflow: "hidden",
     display: "flex",
     alignItems: "center",
@@ -26,7 +31,10 @@ const styles = {
   },
 
   textContainer: {
-    padding: "60px",
+    paddingTop: "20px",
+    paddingBottom: "30px",
+    paddingLeft: "30px",
+    paddingRight: "30px",
     display: "flex",
     flexDirection: "column",
     gap: "20px",
@@ -34,11 +42,7 @@ const styles = {
 
   title: {
     color: "white",
-    fontSize: "20px",
-    marginTop: "15px",
-    marginLeft:"25px",
-    marginRight:"25px",
-    fontFamily: "serif",
+    fontSize: "24px",
     fontWeight: "bold",
     lineHeight: "1.1",
   },
@@ -47,11 +51,6 @@ const styles = {
     color: "white",
     fontSize: "15px",
     textDecoration: "underline",
-    marginBottom: "25px",
-    marginLeft:"25px",
-    marginRight:"25px",
-    fontFamily: "inter"
-
   },
 } as const;
 
@@ -60,7 +59,6 @@ interface SmallProps {
     image: string;
     title: string;
     descrip: string;
-
 }
 
 export default function SmallPopup({
@@ -79,8 +77,8 @@ export default function SmallPopup({
       </div>
 
       <div style={styles.textContainer}>
-        <h2 style={styles.title}>{title}</h2>
-        <p style={styles.description}>{descrip}</p>
+        <h2 className={notoSerif.className} style={styles.title}>{title}</h2>
+        <p className={inter.className} style={styles.description}>{descrip}</p>
       </div>
     </div>
   );
