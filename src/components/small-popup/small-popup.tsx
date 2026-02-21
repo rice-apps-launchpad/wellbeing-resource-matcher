@@ -1,67 +1,65 @@
+import Image from 'next/image';
+import {Inter, Noto_Serif} from 'next/font/google';
+
+// https://nextjs.org/docs/app/getting-started/fonts
+const inter = Inter({ subsets: ['latin'] });
+const notoSerif = Noto_Serif({ subsets: ['latin'] });
+
 const styles = {
   card: {
-    width: "80%",
-    height: "250px",
-    borderRadius: "40px",
+    width: "100%",
+    borderRadius: "25px",
     overflow: "hidden",
-    display: "flex" as "flex",
-    flexDirection: "column" as "column",
-    boxShadow: "0 25px 50px -12px rgba(0 ,0, 0, 0, 0.25)",
-    backgroundColor: "#00205B" ,
+    display: "flex",
+    flexDirection: "column",
+    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+    backgroundColor: "#00205B",
   },
 
   imageContainer: {
-    // changed width
-    width: "80%",
+    width: "100%",
+    aspectRatio: "3 / 1",
     overflow: "hidden",
-    display: "flex" as "flex",
+    display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    position: "relative",
   },
 
   image: {
-    height: "100%",
-    width: "100%",
-    objectfit: "cover" as "cover"
+    objectFit: "cover",
   },
 
   textContainer: {
-    padding: "60 px",
+    paddingTop: "20px",
+    paddingBottom: "30px",
+    paddingLeft: "30px",
+    paddingRight: "30px",
     display: "flex",
-    flexDirection: "column" as "column",
+    flexDirection: "column",
     gap: "20px",
   },
 
   title: {
     color: "white",
-    fontSize: "20px",
-    marginTop: "15px",
-    marginLeft:"25px",
-    marginRight:"25px", 
-    fontFamily: "serif",
-    fontWeight: "bold" as "bold",
-    lineHeight: "1.1"
+    fontSize: "24px",
+    fontWeight: "bold",
+    lineHeight: "1.1",
   },
 
   description: {
     color: "white",
     fontSize: "15px",
     textDecoration: "underline",
-    marginBottom: "25px",
-    marginLeft:"25px",
-    marginRight:"25px", 
-    fontFamily: "inter"
-  
   },
-};
+} as const;
 
 
 interface SmallProps {
     image: string;
     title: string;
     descrip: string;
-  
-};
+}
 
 export default function SmallPopup({
     image,
@@ -71,15 +69,16 @@ export default function SmallPopup({
   return (
     <div style={styles.card}>
       <div style={styles.imageContainer}>
-        <img 
-        src={image} 
-        alt={title} 
+        <Image
+        src={image}
+        alt={title}
+        fill
         style={styles.image} />
       </div>
 
       <div style={styles.textContainer}>
-        <h2 style={styles.title}>{title}</h2>
-        <p style={styles.description}>{descrip}</p>
+        <h2 className={notoSerif.className} style={styles.title}>{title}</h2>
+        <p className={inter.className} style={styles.description}>{descrip}</p>
       </div>
     </div>
   );
