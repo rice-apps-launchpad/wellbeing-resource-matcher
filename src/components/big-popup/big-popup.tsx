@@ -1,35 +1,35 @@
 import React from 'react';
+import Image from 'next/image';
 
 const styles = {
     card: {
-        maxWidth: "1027px", 
-        minHeight: "668px", 
+        width: "100%",
+        maxWidth: "64rem",
         margin: "0 auto",
         overflow: "hidden",
         borderRadius: "20px", 
         boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
         backgroundColor: "white",
-        display: "flex" as "flex",
-        flexDirection: "column" as "column",
+        display: "flex",
+        flexDirection: "column",
     },
     imageContainer: {
         width: "100%",
-        height: "335px", 
+        aspectRatio: "3 / 1",
         overflow: "hidden",
+        position: "relative",
     },
     image: {
-        width: "100%",
-        height: "100%",
-        objectFit: "cover" as "cover",
+        objectFit: "cover",
     },
     contentSection: {
         backgroundColor: "#00205B", 
         padding: "60px 40px",
         color: "white",
-        flexGrow: 1, 
-        display: "flex" as "flex",
-        flexDirection: "column" as "column",
-        justifyContent: "center" as "center",
+        flexGrow: 1,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
     },
     matchText: {
         fontSize: "34px",
@@ -40,7 +40,7 @@ const styles = {
     title: {
         fontSize: "3.5rem", 
         fontFamily: "serif",
-        fontWeight: "bold" as "bold",
+        fontWeight: "bold",
         marginBottom: "24px",
         lineHeight: "1.1",
     },
@@ -49,7 +49,7 @@ const styles = {
         lineHeight: "1.7",
         opacity: 0.9,
     }
-};
+} as const;
 
 interface BigPopupProps {
    imageSrc: string;
@@ -68,9 +68,10 @@ export default function BigPopup({
        <div style={styles.card}>
            {imageSrc && (
                <div style={styles.imageContainer}>
-                   <img 
+                   <Image
                        src={imageSrc} 
-                       alt={title} 
+                       alt={title}
+                       fill
                        style={styles.image} 
                    />
                </div>

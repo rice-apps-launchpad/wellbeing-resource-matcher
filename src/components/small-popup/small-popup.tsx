@@ -1,34 +1,34 @@
+import Image from 'next/image';
+
 const styles = {
   card: {
-    width: "80%",
-    height: "250px",
+    width: "100%",
     borderRadius: "40px",
     overflow: "hidden",
-    display: "flex" as "flex",
-    flexDirection: "column" as "column",
-    boxShadow: "0 25px 50px -12px rgba(0 ,0, 0, 0, 0.25)",
-    backgroundColor: "#00205B" ,
+    display: "flex",
+    flexDirection: "column",
+    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+    backgroundColor: "#00205B",
   },
 
   imageContainer: {
-    // changed width
-    width: "80%",
+    width: "100%",
+    aspectRatio: "16 / 9",
     overflow: "hidden",
-    display: "flex" as "flex",
+    display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    position: "relative",
   },
 
   image: {
-    height: "100%",
-    width: "100%",
-    objectfit: "cover" as "cover"
+    objectFit: "cover",
   },
 
   textContainer: {
-    padding: "60 px",
+    padding: "60px",
     display: "flex",
-    flexDirection: "column" as "column",
+    flexDirection: "column",
     gap: "20px",
   },
 
@@ -37,10 +37,10 @@ const styles = {
     fontSize: "20px",
     marginTop: "15px",
     marginLeft:"25px",
-    marginRight:"25px", 
+    marginRight:"25px",
     fontFamily: "serif",
-    fontWeight: "bold" as "bold",
-    lineHeight: "1.1"
+    fontWeight: "bold",
+    lineHeight: "1.1",
   },
 
   description: {
@@ -49,19 +49,19 @@ const styles = {
     textDecoration: "underline",
     marginBottom: "25px",
     marginLeft:"25px",
-    marginRight:"25px", 
+    marginRight:"25px",
     fontFamily: "inter"
-  
+
   },
-};
+} as const;
 
 
 interface SmallProps {
     image: string;
     title: string;
     descrip: string;
-  
-};
+
+}
 
 export default function SmallPopup({
     image,
@@ -71,9 +71,10 @@ export default function SmallPopup({
   return (
     <div style={styles.card}>
       <div style={styles.imageContainer}>
-        <img 
-        src={image} 
-        alt={title} 
+        <Image
+        src={image}
+        alt={title}
+        fill
         style={styles.image} />
       </div>
 
