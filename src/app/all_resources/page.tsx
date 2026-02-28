@@ -1,17 +1,24 @@
 import SmallPopup from "@/components/small-popup/small-popup";
 
 const styles = {
+  gridTitle: {
+    color: "#7C7E7F",
+    textAlign: "center",
+    fontFamily: "Noto Serif",
+    maxWidth: "900px",
+    fontSize: "45px",
+  },
   layoutWrapper: {
     width: "100%",
-    maxWidth: "900px",
-    margin: "0 auto",
+    margin: "0",
     padding: "40px",
-    backgroundColor: "#ffffff",
     boxSizing: "border-box",
   },
   gridContainer: {
     display: "grid",
-    gridTemplateColumns: "repeat(2, 1fr)",
+    textAlign: "start",
+    gridTemplateColumns: "repeat(auto-fit, 380px)",
+    justifyContent: "start",
     gap: "48px",
     width: "100%",
   },
@@ -19,30 +26,34 @@ const styles = {
 
 export default function Page() {
   return (
-    <div style={styles.layoutWrapper}>
-      {/* TODO: Grid */}
-      <div style={styles.gridContainer}>
-        <SmallPopup
-          image="/ccd.jpeg"
-          title="Office of Academic Advising"
-          descrip="https://oaa.rice.edu"
-        />
-        <SmallPopup
-          image="/ccd.jpeg"
-          title="Petitions & Special Requests"
-          descrip="https://dou.rice.edu/student-resources..."
-        />
-        <SmallPopup
-          image="/ccd.jpeg"
-          title="Office of the Registrar"
-          descrip="Description text here"
-        />
-        <SmallPopup
-          image="/ccd.jpeg"
-          title="Center for Career Development"
-          descrip="Description text here"
-        />
+    <div style={styles.gridTitle}>
+      <h1>
+        <b>Resource Matcher</b>
+      </h1>
+      <div style={styles.layoutWrapper}>
+        <div style={styles.gridContainer}>
+          <SmallPopup
+            image="/ccd.jpeg"
+            title="Office of Academic Advising"
+            descrip="https://oaa.rice.edu"
+          />
+          <SmallPopup
+            image="/ccd.jpeg"
+            title="Petitions & Special Requests"
+            descrip="https://dou.rice.edu/student-resources..."
+          />
+          <SmallPopup
+            image="/ccd.jpeg"
+            title="Office of the Registrar"
+            descrip="Description text here"
+          />
+          <SmallPopup
+            image="/ccd.jpeg"
+            title="Center for Career Development"
+            descrip="Description text here"
+          />
+        </div>
       </div>
     </div>
-  )
+  );
 }
