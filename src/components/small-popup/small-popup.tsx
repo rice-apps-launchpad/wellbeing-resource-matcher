@@ -23,7 +23,6 @@ export default function SmallPopup({ image, title, descrip }: SmallProps) {
         flexDirection: "column" as const,
         backgroundColor: "#00205B",
         cursor: "pointer",
-       
         transition: "all 0.3s ease",
         transform: isHovered ? "translateY(-8px)" : "translateY(0)",
         boxShadow: isHovered 
@@ -47,12 +46,27 @@ export default function SmallPopup({ image, title, descrip }: SmallProps) {
             </div>
 
             <div style={{ padding: "25px", display: "flex", flexDirection: "column", gap: "10px" }}>
-                <h2 className={notoSerif.className} style={{ color: "white", fontSize: "22px", fontWeight: "bold" }}>
+                <h2 className={notoSerif.className} style={{ color: "white", fontSize: "22px", fontWeight: "bold", margin: 0 }}>
                     {title}
                 </h2>
-                <p className={inter.className} style={{ color: "white", fontSize: "14px", textDecoration: "underline", opacity: 0.9 }}>
+                
+                {/* --- CLICKABLE LINK SECTION --- */}
+                <a 
+                    href={descrip} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className={inter.className} 
+                    style={{ 
+                        color: "white", 
+                        fontSize: "14px", 
+                        textDecoration: "underline", 
+                        opacity: isHovered ? 1 : 0.8, 
+                        transition: "opacity 0.2s ease", //cool way to make link brighten and hover 
+                        wordBreak: "break-all" 
+                    }}
+                >
                     {descrip}
-                </p>
+                </a>
             </div>
         </div>
     );
