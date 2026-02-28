@@ -7,7 +7,7 @@ const notoSerif = Noto_Serif({ subsets: ['latin'] });
 
 const styles = {
   card: {
-    width: "100%",
+    width: "380px",
     borderRadius: "25px",
     overflow: "hidden",
     display: "flex",

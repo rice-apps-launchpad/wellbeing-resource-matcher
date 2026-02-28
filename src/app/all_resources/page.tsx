@@ -1,17 +1,20 @@
 import SmallPopup from "@/components/small-popup/small-popup";
 
 const styles = {
+  gridTitle: {
+    color: "white",
+  },
   layoutWrapper: {
     width: "100%",
     maxWidth: "900px",
-    margin: "0 auto",
+    margin: "0",
     padding: "40px",
-    backgroundColor: "#ffffff",
     boxSizing: "border-box",
   },
   gridContainer: {
     display: "grid",
-    gridTemplateColumns: "repeat(2, 1fr)",
+    gridTemplateColumns: "repeat(auto-fit, 380px)",
+    justifyContent: "start",
     gap: "48px",
     width: "100%",
   },
