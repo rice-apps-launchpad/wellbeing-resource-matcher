@@ -17,7 +17,7 @@ export async function callSheets(): Promise<Resource[]> {
 
     const result = await sheets.spreadsheets.values.get({
       spreadsheetId: '1lKEbI5yVq2QeK6s7N5ft2FPUTW435XykQ7Ags1QZ62E',
-      range: 'On Campus Resources!A2:C', 
+      range: 'On Campus Resources!A2:L', 
     });
 
     const vals = result.data.values;
@@ -31,12 +31,13 @@ export async function callSheets(): Promise<Resource[]> {
       .map((row) => {
         const title = row[1];
         const website = row[2];
+        const image = row[11];
 
         if (title && title.trim() !== "" && title !== "Resource Name") {
           return {
             title: title,
             descrip: website || "https://www.rice.edu",
-            image: "/ccd.jpeg" 
+            image: image 
           };
         }
         return null;
