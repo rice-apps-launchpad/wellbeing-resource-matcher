@@ -62,22 +62,39 @@ export default function ChatPage() {
 
                  // Generate response
                  matchKeywords(inputRef.value, userMessages).then((response) => {
-                  if(response.match == null){
-                    setMessages(prevState => [...prevState, {message: response.follow_up_question, sender: Sender.server}]);
-                    console.log(messages)
+                   if (response.match == null) {
+                     setMessages(prevState => [...prevState, {
+                       message: response.follow_up_question,
+                       sender: Sender.server
+                     }]);
+                     console.log(messages)
 
-                  } else {
-                    setMessages(prevState => [...prevState, 
-                    {message: `Resource found: ${response.match.resource_name}`, sender: Sender.server}
-                    ]);
-                    //terminate chat here
-                    
-                  }
+                   } else {
+                     let finalMsg: string = ""
+                     if (response.match.resource_name !== null) {
+                       finalMsg += "We think that the best match for you is " + response.match.resource_name
+                     }
+                     if (response.match.resource_location !== null) {
+                       finalMsg += "You can visit them in person at: " + response.match.resource_location
+                     }
+                     if (response.match.contact_info !== null) {
+                       finalMsg += "You can contact them directly at: " + response.match.contact_info
+                     }
+                     if (response.match.schedule_link !== null) {
+                       finalMsg += "Make an appointment at: " + response.match.schedule_link
+                     }
 
-                  //console.log("RESPONSE" + response.match.resource_name) 
+                     setMessages(prevState => [...prevState,
+                       {message: finalMsg, sender: Sender.server}
+                     ]);
+                     //terminate chat here
 
-                 });             
-                 
+                   }
+
+                   //console.log("RESPONSE" + response.match.resource_name)
+
+                 });
+
                }
              }}/>
     </div>
