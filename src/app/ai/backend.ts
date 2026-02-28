@@ -108,7 +108,22 @@ const response = await ai.models.generateContent({
   try {
     const match = JSON.parse(response.text);
     console.log("Parsed Match:", match);
-    return response.text;
+
+    let finalMsg: string = ""
+    if (match.resource_name !== null) {
+      finalMsg += "We think that the best match for you is " + match.resource_name
+    }
+    if (match.resource_location !== null) {
+      finalMsg += "You can visit them in person at: " + match.resource_location
+    }
+    if (match.contact_info !== null) {
+      finalMsg += "You can contact them directly at: " + match.contact_info
+    }
+    if (match.schedule_link !== null) {
+      finalMsg += "Make an appointment at: " + match.schedule_link
+    }
+
+    return finalMsg;
   } catch (e) {
     console.error("Failed to parse JSON:", e);
     return null;
