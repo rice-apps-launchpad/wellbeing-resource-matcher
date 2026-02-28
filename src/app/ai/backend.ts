@@ -13,7 +13,7 @@ export async function generateResponse(input: string) {
   'use server'
 
   const response = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
+    model: "gemini-3-flash",
     contents: `${input}`,
   });
   console.log(response.text);
@@ -26,7 +26,7 @@ export async function generateResponse(input: string) {
 // }
 
 
-export async function matchKeywords(userInput: string) {
+export async function matchKeywords(userInput: string, chatHistory: string[]) {
   'use server'
 
     // const jsonSchema = z.toJSONSchema(resourceSchema);
@@ -45,13 +45,13 @@ export async function matchKeywords(userInput: string) {
   const resourceSchema = {
     type: "OBJECT",
     properties: {
-      status: { 
-        type: "STRING", 
+      status: {
+        type: "STRING",
         enum: ["MATCH_FOUND", "NEEDS_CLARIFICATION"],
         description: "Whether a resource was found or more info is needed."
       },
       follow_up_question: {
-        type: "INTEGER",
+        type: "STRING",
         description: "The specific question to ask the user if status is NEEDS_CLARIFICATION",
         nullable: true,
       },
@@ -71,8 +71,8 @@ export async function matchKeywords(userInput: string) {
   };
 
   const keyword = await ai.models.generateContent({
-    model: "gemini-2.5-flash-lite-preview-09-2025",
-    contents: `The following is the user's input to our application: ${userInput}
+    model: "gemini-2.5-flash-lite",
+    contents: `The following is the user's input to our application: ${userInput}. The following is the previous chat history: ${chatHistory}
     
     Please match the user input with a category from the following spreadsheet: ${entireSpreadsheet} OR ask a clarifying question to better understand the user's needs by providing the user with the above follow-up options to choose from ${followupoptions}. Return either the best-fit category or the clarifying question with the options.
 
@@ -83,6 +83,7 @@ export async function matchKeywords(userInput: string) {
   console.log(keyword.text);
   console.log(keyword.candidates);
   console.log(keyword.promptFeedback);
+  console.log("chat history:" + chatHistory);
 
 const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
@@ -106,9 +107,9 @@ const response = await ai.models.generateContent({
   }
 
   try {
-    const match = JSON.parse(response.text);
-    console.log("Parsed Match:", match);
-    return response.text;
+    const responseJson = JSON.parse(response.text);
+    console.log("Parsed Match:", responseJson);
+    return responseJson;
   } catch (e) {
     console.error("Failed to parse JSON:", e);
     return null;
