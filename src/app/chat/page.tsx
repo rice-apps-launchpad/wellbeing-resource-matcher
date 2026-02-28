@@ -1,24 +1,19 @@
-'use client'; // double check this
-/*
-This will be the "chat" page for both desktop and mobile! It can take infinitely many messages and scrolls
-automatically.
- */
+'use client';
 
 import {useEffect, useRef, useState} from "react";
 import {ChatMessage, Sender} from "@/data/chat-message";
 import MessageBubble from "@/components/message-bubble";
 import {matchKeywords} from "@/app/ai/backend";
 
-
 export default function ChatPage() {
   const chatInputRef = useRef<HTMLInputElement>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [userMessages, setUserMessages] = useState<string[]>([]);
+  
+  // --- ADD THIS LINE HERE ---
+  const [isSessionActive, setIsSessionActive] = useState(true); 
 
-
-  // When `messages` changes, we might need to scroll to bottom
   useEffect(() => {
-    // https://stackoverflow.com/a/21067431
     const scrollView = scrollViewRef.current;
     if (!scrollView) return;
     console.log(scrollView.scrollHeight)
@@ -30,61 +25,61 @@ export default function ChatPage() {
   }, [messages]);
 
   const terminateSession = () => {
-    setMessages([]); // Clears history so the next chat starts fresh
+    setMessages([]);
+    setIsSessionActive(true); // Reset the lock if you clear the chat
   };
+  
   const scrollViewRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className={"w-100 h-screen flex flex-col justify-end bg-[#E8E8E8] pb-5 pl-5"}>
-      {/* This div holds all the messages */}
       <div ref={scrollViewRef} className={"flex flex-col items-end gap-3 overflow-scroll pr-5"}>
         {messages.map((message, index) => {
           return (<MessageBubble message={message} key={index}/>)
         })}
       </div>
-      <input className={"mt-5 mb-5 bg-white rounded-2xl border-[0.5px] border-[#9BA9B0] p-1 mr-5"}
-             placeholder={"Type your message..."}
+
+      <input 
+             disabled={!isSessionActive} 
+             style={{ cursor: isSessionActive ? 'text' : 'not-allowed', opacity: isSessionActive ? 1 : 0.6 }}
+             
+             className={"mt-5 mb-5 bg-white rounded-2xl border-[0.5px] border-[#9BA9B0] p-1 mr-5"}
+             placeholder={isSessionActive ? "Type your message..." : "Chat ended."}
              ref={chatInputRef}
              onKeyDown={event => {
                if (event.key === "Enter") {
-                 // If chat input is empty, don't submit
                  const inputRef = chatInputRef.current;
-                 if (!inputRef) {
+                 if (!inputRef || inputRef.value == "" || !isSessionActive) {
                    return
                  }
-                 if (inputRef.value == "") {
-                   return
-                 }
-                 // "Submit" the message
+
                  setMessages(prevState => [...prevState, {message: inputRef.value, sender: Sender.user}]);
                  setUserMessages(prevMes => [...prevMes, inputRef.value])
 
-
-                 // Generate response
                  matchKeywords(inputRef.value, userMessages).then((response) => {
                   if(response.match == null){
                     setMessages(prevState => [...prevState, {message: response.follow_up_question, sender: Sender.server}]);
-                    console.log(messages)
-
                   } else {
                     setMessages(prevState => [...prevState, 
                     {message: `Resource found: ${response.match.resource_name}`, sender: Sender.server}
                     ]);
-                    //terminate chat here
                     
+                    setIsSessionActive(false); 
+                    inputRef.value = ""; // Clear the input one last time
                   }
-
-                  //console.log("RESPONSE" + response.match.resource_name) 
-
                  });             
-                 
                }
              }}/>
+             
+      {/* OPTIONAL: Show a Restart button only when session is inactive */}
+      {!isSessionActive && (
+        <button 
+          onClick={terminateSession}
+          className="mr-5 mb-5 p-2 bg-blue-500 text-white rounded-xl"
+        >
+          Start New Search
+        </button>
+      )}
     </div>
   )
 }
-
-
-
-
-
