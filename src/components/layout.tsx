@@ -1,8 +1,11 @@
-const styles = {
+import React from "react";
+
+const styles: Record<string, React.CSSProperties> = {
     container: {
         height: "100vh",
         width: "100vw",
         display: "flex",
+        overflow: "hidden",
     },
 
     left:{
@@ -14,19 +17,29 @@ const styles = {
 
     chat: {
         width: "380px",
+        minWidth: "380px",
+        maxWidth: "380px",
         flex: "0 0 380px",
         flexShrink: 0,
         flexDirection: "column",
         display: "flex",
+        overflow: "hidden",
     },
 };
 
-export default function DesktopLayout({ leftContent, chatContent }) {
+
+type DesktopLayoutProps = {
+    leftContent: React.ReactNode;
+    chatContent: React.ReactNode;
+};
+
+
+export default function DesktopLayout({ leftContent, chatContent }: DesktopLayoutProps) {
     return (
         <div style={styles.container}>
             <div style={styles.left}>{leftContent}</div>
             <div style={styles.chat}>{chatContent}</div>
         </div>
-    );
+    ); 
 }
 
