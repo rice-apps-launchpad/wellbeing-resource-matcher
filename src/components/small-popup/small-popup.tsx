@@ -1,59 +1,10 @@
+"use client";
+import { useState } from 'react';
 import Image from 'next/image';
-import {Inter, Noto_Serif} from 'next/font/google';
+import { Inter, Noto_Serif } from 'next/font/google';
 
-// https://nextjs.org/docs/app/getting-started/fonts
 const inter = Inter({ subsets: ['latin'] });
 const notoSerif = Noto_Serif({ subsets: ['latin'] });
-
-const styles = {
-  card: {
-    width: "100%",
-    borderRadius: "25px",
-    overflow: "hidden",
-    display: "flex",
-    flexDirection: "column",
-    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-    backgroundColor: "#00205B",
-  },
-
-  imageContainer: {
-    width: "100%",
-    aspectRatio: "3 / 1",
-    overflow: "hidden",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
-  },
-
-  image: {
-    objectFit: "cover",
-  },
-
-  textContainer: {
-    paddingTop: "20px",
-    paddingBottom: "30px",
-    paddingLeft: "30px",
-    paddingRight: "30px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "20px",
-  },
-
-  title: {
-    color: "white",
-    fontSize: "24px",
-    fontWeight: "bold",
-    lineHeight: "1.1",
-  },
-
-  description: {
-    color: "white",
-    fontSize: "15px",
-    textDecoration: "underline",
-  },
-} as const;
-
 
 interface SmallProps {
     image: string;
@@ -61,27 +12,48 @@ interface SmallProps {
     descrip: string;
 }
 
-export default function SmallPopup({
-    image,
-    title,
-    descrip
-}: SmallProps){
-  return (
-    <div style={styles.card}>
-      <div style={styles.imageContainer}>
-        <Image
-        src={image}
-        alt={title}
-        fill
-        style={styles.image} />
-      </div>
+export default function SmallPopup({ image, title, descrip }: SmallProps) {
+    const [isHovered, setIsHovered] = useState(false);
 
-      <div style={styles.textContainer}>
-        <h2 className={notoSerif.className} style={styles.title}>{title}</h2>
-        <p className={inter.className} style={styles.description}>{descrip}</p>
-      </div>
-    </div>
-  );
+    const cardStyle = {
+        width: "100%",
+        borderRadius: "25px",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column" as const,
+        backgroundColor: "#00205B",
+        cursor: "pointer",
+       
+        transition: "all 0.3s ease",
+        transform: isHovered ? "translateY(-8px)" : "translateY(0)",
+        boxShadow: isHovered 
+            ? "0 30px 60px -12px rgba(0, 0, 0, 0.4)" 
+            : "0 20px 40px -12px rgba(0, 0, 0, 0.25)",
+    };
+
+    return (
+        <div 
+            style={cardStyle}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
+            <div style={{ width: "100%", height: "180px", position: "relative" }}>
+                <Image
+                    src={image}
+                    alt={title}
+                    fill
+                    style={{ objectFit: "cover" }}
+                />
+            </div>
+
+            <div style={{ padding: "25px", display: "flex", flexDirection: "column", gap: "10px" }}>
+                <h2 className={notoSerif.className} style={{ color: "white", fontSize: "22px", fontWeight: "bold" }}>
+                    {title}
+                </h2>
+                <p className={inter.className} style={{ color: "white", fontSize: "14px", textDecoration: "underline", opacity: 0.9 }}>
+                    {descrip}
+                </p>
+            </div>
+        </div>
+    );
 }
-
-
