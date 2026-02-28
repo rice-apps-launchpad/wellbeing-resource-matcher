@@ -9,9 +9,12 @@ import {ChatMessage, Sender} from "@/data/chat-message";
 import MessageBubble from "@/components/message-bubble";
 import {matchKeywords} from "@/app/ai/backend";
 
+
 export default function ChatPage() {
   const chatInputRef = useRef<HTMLInputElement>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [userMessages, setUserMessages] = useState<string[]>([]);
+
 
   // When `messages` changes, we might need to scroll to bottom
   useEffect(() => {
@@ -26,6 +29,9 @@ export default function ChatPage() {
       scrollView.scrollTop = scrollView.scrollHeight - scrollView.clientHeight;
   }, [messages]);
 
+  const terminateSession = () => {
+    setMessages([]); // Clears history so the next chat starts fresh
+  };
   const scrollViewRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -51,14 +57,19 @@ export default function ChatPage() {
                  }
                  // "Submit" the message
                  setMessages(prevState => [...prevState, {message: inputRef.value, sender: Sender.user}]);
+                 setUserMessages(prevMes => [...prevMes, inputRef.value])
+
 
                  // Generate response
-                 matchKeywords(inputRef.value).then((response) => {
+                 matchKeywords(inputRef.value, userMessages).then((response) => {
                   if(response.match == null){
                     setMessages(prevState => [...prevState, {message: response.follow_up_question, sender: Sender.server}]);
-                    //take prevState, iterate through variable, and put as input back into AI
+                    console.log(messages)
+
                   } else {
-                    setMessages(prevState => [...prevState, {message: `Resource found: ${response.match.resource_name}`, sender: Sender.server}]);
+                    setMessages(prevState => [...prevState, 
+                    {message: `Resource found: ${response.match.resource_name}`, sender: Sender.server}
+                    ]);
                     //terminate chat here
                     
                   }
@@ -72,5 +83,8 @@ export default function ChatPage() {
     </div>
   )
 }
+
+
+
 
 

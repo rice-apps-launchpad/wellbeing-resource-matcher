@@ -26,7 +26,7 @@ export async function generateResponse(input: string) {
 // }
 
 
-export async function matchKeywords(userInput: string) {
+export async function matchKeywords(userInput: string, chatHistory: string[]) {
   'use server'
 
     // const jsonSchema = z.toJSONSchema(resourceSchema);
@@ -72,7 +72,7 @@ export async function matchKeywords(userInput: string) {
 
   const keyword = await ai.models.generateContent({
     model: "gemini-2.5-flash-lite",
-    contents: `The following is the user's input to our application: ${userInput}
+    contents: `The following is the user's input to our application: ${userInput}. The following is the previous chat history: ${chatHistory}
     
     Please match the user input with a category from the following spreadsheet: ${entireSpreadsheet} OR ask a clarifying question to better understand the user's needs by providing the user with the above follow-up options to choose from ${followupoptions}. Return either the best-fit category or the clarifying question with the options.
 
@@ -83,6 +83,7 @@ export async function matchKeywords(userInput: string) {
   console.log(keyword.text);
   console.log(keyword.candidates);
   console.log(keyword.promptFeedback);
+  console.log("chat history:" + chatHistory);
 
 const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
