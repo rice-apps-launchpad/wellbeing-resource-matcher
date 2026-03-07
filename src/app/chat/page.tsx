@@ -4,17 +4,25 @@ This will be the "chat" page for both desktop and mobile! It can take infinitely
 automatically.
  */
 
-import {useEffect, useRef, useState} from "react";
+import {Dispatch, SetStateAction, useEffect, useRef, useState} from "react";
 import {ChatMessage, Sender} from "@/data/chat-message";
 import MessageBubble from "@/components/message-bubble";
 import {matchKeywords} from "@/app/ai/backend";
 
+interface ChatPageProps {
+  isLaptop: boolean,
+  setIsLaptop: Dispatch<SetStateAction<boolean>>,
+}
 
-export default function ChatPage() {
+export default function ChatPage({ props }: ChatPageProps) {
   const chatInputRef = useRef<HTMLInputElement>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [userMessages, setUserMessages] = useState<string[]>([]);
 
+  // new for laptop-mobile screen changing
+  // set to false intially -> if screen detetcs a laptop view-> switch
+
+  
 
   // When `messages` changes, we might need to scroll to bottom
   useEffect(() => {
@@ -70,20 +78,28 @@ export default function ChatPage() {
                     setMessages(prevState => [...prevState, 
                     {message: `Resource found: ${response.match.resource_name}`, sender: Sender.server}
                     ]);
+
+
+                    
                   }
+
+
 
                   // Add the UI to display the big popup ONLY IF a “mobile view” flag is set
                   // otherwise, this popup should be size 0 / invisible / hidden / not rendered.
 
+                  // flag should be a useState
                   // (set Two booleans = False)
-                  // Recognize is width > height -> laptop screen (1st flag)
-                  // Recognize height > width -> mobile/ipad screen (2nd flag)
-
+                  
                   // screenFlag()
                   // if width > height == True:
                   // bool laptopScreen = True
 
+
+
                   //console.log("RESPONSE" + response.match.resource_name) 
+
+
 
                  });             
                  
