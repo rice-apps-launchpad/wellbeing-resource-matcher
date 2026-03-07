@@ -22,7 +22,6 @@ export default function SmallPopup({ image, title, descrip }: SmallProps) {
         display: "flex",
         flexDirection: "column" as const,
         backgroundColor: "#00205B",
-        cursor: "pointer",
         transition: "all 0.3s ease",
         transform: isHovered ? "translateY(-8px)" : "translateY(0)",
         boxShadow: isHovered 
@@ -31,10 +30,14 @@ export default function SmallPopup({ image, title, descrip }: SmallProps) {
     };
 
     return (
-        <div 
-            style={cardStyle}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+        <a
+        href = {descrip}
+        target = "_blank" 
+        rel = "noopener no referrer" 
+        style = {cardStyle} 
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className = {inter.className}
         >
             <div style={{ width: "100%", height: "180px", position: "relative" }}>
                 <Image
@@ -61,13 +64,13 @@ export default function SmallPopup({ image, title, descrip }: SmallProps) {
                         fontSize: "14px", 
                         textDecoration: "underline", 
                         opacity: isHovered ? 1 : 0.8, 
-                        transition: "opacity 0.2s ease", //cool way to make link brighten and hover 
+                        transition: "opacity 0.2s ease",
                         wordBreak: "break-all" 
                     }}
                 >
                     {descrip}
                 </a>
             </div>
-        </div>
+        </a>
     );
 }
