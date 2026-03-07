@@ -33,6 +33,8 @@ export async function matchKeywords(userInput: string, chatHistory: string[]) {
   // Download resource spreadsheet
   const entireSpreadsheet: string = await callSheets();
 
+  console.log("chat history:" + chatHistory);
+
   const followupoptions = {
     1: "Can you please provide more details about the issue you're facing?",
     2: "Could you specify which department or service you're trying to access?",
@@ -83,7 +85,7 @@ export async function matchKeywords(userInput: string, chatHistory: string[]) {
   console.log(keyword.text);
   console.log(keyword.candidates);
   console.log(keyword.promptFeedback);
-  console.log("chat history:" + chatHistory);
+  
 
 const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",

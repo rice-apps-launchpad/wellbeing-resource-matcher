@@ -26,6 +26,7 @@ export default function ChatPage() {
 
   const terminateSession = () => {
     setMessages([]);
+    setUserMessages([]);
     setIsSessionActive(true); // Reset the lock if you clear the chat
   };
   
