@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useRef} from "react";
 
 const styles: Record<string, React.CSSProperties> = {
     container: {
@@ -24,6 +24,12 @@ const styles: Record<string, React.CSSProperties> = {
         display: "flex",
         overflow: "hidden",
     },
+
+    chatScroll: {
+        flex: 1,
+        overflowY: "auto",
+        minHeight: 0,
+    },
 };
 
 
@@ -32,6 +38,16 @@ type DesktopLayoutProps = {
     chatContent: React.ReactNode;
 };
 
+function AutoScrollChat({children}: {children: React.ReactNode}){ 
+    const scrollRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const scrollEl = scrollRef.current;
+        if (!scrollEl) return;
+
+        const 
+    }
+}
 
 export default function DesktopLayout({ leftContent, chatContent }: DesktopLayoutProps) {
     return (
