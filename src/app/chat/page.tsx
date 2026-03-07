@@ -79,7 +79,7 @@ export default function ChatPage() {
               if (response.match == null) {
                 setMessages(prev => [...prev, { message: response.follow_up_question, sender: Sender.server }]);
               } else {
-                setMessages(prev => [...prev, { message: `Resource found: ${response.match.resource_name}`, sender: Sender.server }]);
+                setMessages(prev => [...prev, { message: `Resource found: ${response.match.resource_row}`, sender: Sender.server }]);
                 setIsSessionActive(false);
               }
             } finally {
