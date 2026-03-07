@@ -43,7 +43,7 @@ export default function ChatPage({ props }: ChatPageProps) {
   const scrollViewRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className={"w-100 h-screen flex flex-col justify-end bg-[#E8E8E8] pb-5 pl-5"}>
+    <div className={"h-screen flex flex-col justify-end bg-[#E8E8E8] pb-5 pl-5"}>
       {/* This div holds all the messages */}
       <div ref={scrollViewRef} className={"flex flex-col items-end gap-3 overflow-scroll pr-5"}>
         {messages.map((message, index) => {
