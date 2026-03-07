@@ -70,9 +70,18 @@ export default function ChatPage() {
                     setMessages(prevState => [...prevState, 
                     {message: `Resource found: ${response.match.resource_name}`, sender: Sender.server}
                     ]);
-                    //terminate chat here
-                    
                   }
+
+                  // Add the UI to display the big popup ONLY IF a “mobile view” flag is set
+                  // otherwise, this popup should be size 0 / invisible / hidden / not rendered.
+
+                  // (set Two booleans = False)
+                  // Recognize is width > height -> laptop screen (1st flag)
+                  // Recognize height > width -> mobile/ipad screen (2nd flag)
+
+                  // screenFlag()
+                  // if width > height == True:
+                  // bool laptopScreen = True
 
                   //console.log("RESPONSE" + response.match.resource_name) 
 
