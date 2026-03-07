@@ -1,7 +1,7 @@
 'use server';
 
-import { GoogleGenAI } from "@google/genai";
-import { callSheets } from "@/app/sheets/backend";
+import {GoogleGenAI} from "@google/genai";
+import {callSheets} from "@/app/sheets/backend";
 
 // The client gets the API key from the environment variable `GEMINI_API_KEY`.
 const ai = new GoogleGenAI({
@@ -29,7 +29,7 @@ export async function generateResponse(input: string) {
 export async function matchKeywords(userInput: string, chatHistory: string[]) {
   'use server'
 
-    // const jsonSchema = z.toJSONSchema(resourceSchema);
+  // const jsonSchema = z.toJSONSchema(resourceSchema);
   // Download resource spreadsheet
   const entireSpreadsheet: string = await callSheets();
 
@@ -59,11 +59,11 @@ export async function matchKeywords(userInput: string, chatHistory: string[]) {
         type: "OBJECT",
         nullable: true,
         properties: {
-          resource_name: { type: "STRING" },
-          resource_location: { type: "STRING" },
-          contact_info: { type: "STRING" },
-          schedule_link: { type: "STRING" },
-          category: { type: "STRING" }
+          resource_name: {type: "STRING"},
+          resource_location: {type: "STRING"},
+          contact_info: {type: "STRING"},
+          schedule_link: {type: "STRING"},
+          category: {type: "STRING"}
         }
       }
     },
@@ -85,7 +85,7 @@ export async function matchKeywords(userInput: string, chatHistory: string[]) {
   console.log(keyword.promptFeedback);
   console.log("chat history:" + chatHistory);
 
-const response = await ai.models.generateContent({
+  const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
     contents: `
     User Input: ${userInput}
