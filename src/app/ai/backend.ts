@@ -63,7 +63,9 @@ export async function matchKeywords(userInput: string, chatHistory: string[]) {
           resource_location: { type: "STRING" },
           contact_info: { type: "STRING" },
           schedule_link: { type: "STRING" },
-          category: { type: "STRING" }
+          category: { type: "STRING" },
+          // temporary
+          description: { type: "STRING" }
         }
       }
     },

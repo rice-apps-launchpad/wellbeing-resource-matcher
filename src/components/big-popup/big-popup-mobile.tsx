@@ -54,19 +54,19 @@ const styles = {
     }
 } as const;
 
-interface BigPopupProps {
+interface BigPopupMobileProps {
    imageSrc: string;
    matchText?: string;
    title: string;
    description: string;
 }
 
-export default function BigPopup({
+export default function BigPopupMobile({
    imageSrc,
    matchText = "Your top match:",
    title,
    description
-}: BigPopupProps) {
+}: BigPopupMobileProps) {
    return (
        <div style={styles.card}>
            {imageSrc && (
