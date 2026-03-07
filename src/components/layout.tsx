@@ -16,10 +16,10 @@ const styles: Record<string, React.CSSProperties> = {
     },
 
     chat: {
-        width: "380px",
-        minWidth: "380px",
-        maxWidth: "380px",
-        flex: "0 0 380px",
+        width: "400px",
+        minWidth: "400px",
+        maxWidth: "400px",
+        flex: "0 0 400px",
         flexShrink: 0,
         flexDirection: "column",
         display: "flex",
