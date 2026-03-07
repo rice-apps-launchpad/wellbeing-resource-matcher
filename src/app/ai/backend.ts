@@ -13,7 +13,7 @@ export async function generateResponse(input: string) {
   'use server'
 
   const response = await ai.models.generateContent({
-    model: "gemini-3-flash",
+    model: "gemini-2.5-flash-lite",
     contents: `${input}`,
   });
   console.log(response.text);
@@ -59,11 +59,14 @@ export async function matchKeywords(userInput: string, chatHistory: string[]) {
         type: "OBJECT",
         nullable: true,
         properties: {
-          resource_name: { type: "STRING" },
+          resource_row: { type: "INTEGER" },
+          
+          /*
           resource_location: { type: "STRING" },
           contact_info: { type: "STRING" },
           schedule_link: { type: "STRING" },
           category: { type: "STRING" }
+          */
         }
       }
     },
@@ -74,7 +77,7 @@ export async function matchKeywords(userInput: string, chatHistory: string[]) {
     model: "gemini-2.5-flash-lite",
     contents: `The following is the user's input to our application: ${userInput}. The following is the previous chat history: ${chatHistory}
     
-    Please match the user input with a category from the following spreadsheet: ${entireSpreadsheet} OR ask a clarifying question to better understand the user's needs by providing the user with the above follow-up options to choose from ${followupoptions}. Return either the best-fit category or the clarifying question with the options.
+    Please match the user input with a category from the following spreadsheet: ${entireSpreadsheet} OR ask a clarifying question to better understand the user's needs by providing the user with the above follow-up options to choose from ${followupoptions}. Return either the best-fit category row number or the clarifying question with the options.
 
     Finally, return the recommended category in the format of: Academic, Financial, Student Life, Wellbeing/Health/Safety, Parking and Transportation, Information Technology, or Campus Bookstore
     `,
@@ -86,14 +89,14 @@ export async function matchKeywords(userInput: string, chatHistory: string[]) {
   console.log("chat history:" + chatHistory);
 
 const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
+    model: "gemini-3-flash-preview",
     contents: `
     User Input: ${userInput}
     Spreadsheet Context: ${entireSpreadsheet}
     Suggested Category: ${keyword.text}
 
     Instructions:
-    1. If the input is clear, find the best resource and set status to 'MATCH_FOUND'.
+    1. If the input is clear, find the best resource matched row and set status to 'MATCH_FOUND'.
     2. If the input is vague, set status to 'NEEDS_CLARIFICATION' and select the most appropriate ID (1-6) from the following options:
     ${JSON.stringify(followupoptions, null, 2)}
     `,
