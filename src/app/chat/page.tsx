@@ -5,11 +5,20 @@ import {ChatMessage, Sender} from "@/data/chat-message";
 import MessageBubble from "@/components/message-bubble";
 import {matchKeywords} from "@/app/ai/backend";
 
+//Indicator Typing
+import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
+import { TypingIndicator } from "@chatscope/chat-ui-kit-react";
+
 export default function ChatPage() {
   const chatInputRef = useRef<HTMLInputElement>(null);
+  const scrollViewRef = useRef<HTMLDivElement>(null);
+
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [userMessages, setUserMessages] = useState<string[]>([]);
   
+  //typing indicator state
+  const [isTyping, setIsTyping] = useState(false);
+
   // --- ADD THIS LINE HERE ---
   const [isSessionActive, setIsSessionActive] = useState(true); 
 
@@ -27,9 +36,10 @@ export default function ChatPage() {
   const terminateSession = () => {
     setMessages([]);
     setIsSessionActive(true); // Reset the lock if you clear the chat
+    setIsTyping(false); // Reset typing indicator state when starting a new session
   };
   
-  const scrollViewRef = useRef<HTMLDivElement>(null);
+  
 
   return (
     <div className={"w-100 h-screen flex flex-col justify-end bg-[#E8E8E8] pb-5 pl-5"}>
@@ -37,39 +47,48 @@ export default function ChatPage() {
         {messages.map((message, index) => {
           return (<MessageBubble message={message} key={index}/>)
         })}
+        {/* --- RENDER TYPING INDICATOR HERE --- */}
+        {isTyping && (
+          <div className="w-full flex justify-start mb-2">
+             <TypingIndicator content="Owl Resource Matcher is thinking" style={{ backgroundColor: 'transparent' }} />
+          </div>
+        )}
       </div>
+<input 
+        disabled={!isSessionActive} 
+        style={{ cursor: isSessionActive ? 'text' : 'not-allowed', opacity: isSessionActive ? 1 : 0.6 }}
+        className={"mt-5 mb-5 bg-white rounded-2xl border-[0.5px] border-[#9BA9B0] p-1 mr-5"}
+        placeholder={isSessionActive ? "Type your message..." : "Chat ended."}
+        ref={chatInputRef}
+        onKeyDown={async (event) => {
+          if (event.key === "Enter") {
+            const inputRef = chatInputRef.current;
+            if (!inputRef || inputRef.value === "" || !isSessionActive) return;
 
-      <input 
-             disabled={!isSessionActive} 
-             style={{ cursor: isSessionActive ? 'text' : 'not-allowed', opacity: isSessionActive ? 1 : 0.6 }}
-             
-             className={"mt-5 mb-5 bg-white rounded-2xl border-[0.5px] border-[#9BA9B0] p-1 mr-5"}
-             placeholder={isSessionActive ? "Type your message..." : "Chat ended."}
-             ref={chatInputRef}
-             onKeyDown={event => {
-               if (event.key === "Enter") {
-                 const inputRef = chatInputRef.current;
-                 if (!inputRef || inputRef.value == "" || !isSessionActive) {
-                   return
-                 }
+            const userText = inputRef.value;
+            setMessages(prev => [...prev, { message: userText, sender: Sender.user }]);
+            setUserMessages(prev => [...prev, userText]);
+            inputRef.value = ""; // Clear input immediately
 
-                 setMessages(prevState => [...prevState, {message: inputRef.value, sender: Sender.user}]);
-                 setUserMessages(prevMes => [...prevMes, inputRef.value])
+            // START TYPING
+            setIsTyping(true);
 
-                 matchKeywords(inputRef.value, userMessages).then((response) => {
-                  if(response.match == null){
-                    setMessages(prevState => [...prevState, {message: response.follow_up_question, sender: Sender.server}]);
-                  } else {
-                    setMessages(prevState => [...prevState, 
-                    {message: `Resource found: ${response.match.resource_name}`, sender: Sender.server}
-                    ]);
-                    
-                    setIsSessionActive(false); 
-                    inputRef.value = ""; // Clear the input one last time
-                  }
-                 });             
-               }
-             }}/>
+            try {
+              const response = await matchKeywords(userText, userMessages);
+              
+              if (response.match == null) {
+                setMessages(prev => [...prev, { message: response.follow_up_question, sender: Sender.server }]);
+              } else {
+                setMessages(prev => [...prev, { message: `Resource found: ${response.match.resource_name}`, sender: Sender.server }]);
+                setIsSessionActive(false);
+              }
+            } finally {
+              // STOP TYPING
+              setIsTyping(false);
+            }
+          }
+        }}
+      />
              
       {/* OPTIONAL: Show a Restart button only when session is inactive */}
       {!isSessionActive && (
