@@ -1,4 +1,8 @@
+'use client';
+
+import {useEffect, useState} from 'react';
 import SmallPopup from "@/components/small-popup/small-popup";
+import {callSheets} from "@/app/sheets/backend";
 
 const styles = {
   gridTitle: {
@@ -25,6 +29,26 @@ const styles = {
 } as const;
 
 export default function Page() {
+  const [resources, setResources] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadResources() {
+      try {
+        const data = await callSheets();
+        setResources(data);
+      } catch (error) {
+        console.error("Failed to fetch resources:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadResources();
+  }, []);
+
+  if (isLoading) return <div style={{padding: "40px"}}>Loading Rice Resources...</div>;
+
   return (
     <div style={styles.gridTitle}>
       <h1>
@@ -32,28 +56,17 @@ export default function Page() {
       </h1>
       <div style={styles.layoutWrapper}>
         <div style={styles.gridContainer}>
-          <SmallPopup
-            image="/ccd.jpeg"
-            title="Office of Academic Advising"
-            descrip="https://oaa.rice.edu"
-          />
-          <SmallPopup
-            image="/ccd.jpeg"
-            title="Petitions & Special Requests"
-            descrip="https://dou.rice.edu/student-resources..."
-          />
-          <SmallPopup
-            image="/ccd.jpeg"
-            title="Office of the Registrar"
-            descrip="Description text here"
-          />
-          <SmallPopup
-            image="/ccd.jpeg"
-            title="Center for Career Development"
-            descrip="Description text here"
-          />
+          {resources.map((resource, index) => (
+            <SmallPopup
+              key={index}
+              image={resource.image.startsWith('/') ? resource.image : `/${resource.image}`}
+              title={resource.title}
+              descrip={resource.descrip}
+            />
+          ))}
         </div>
       </div>
     </div>
-  );
+  )
+    ;
 }
