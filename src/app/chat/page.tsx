@@ -78,24 +78,10 @@ export default function ChatPage({ props }: ChatPageProps) {
                     setMessages(prevState => [...prevState, 
                     {message: `Resource found: ${response.match.resource_name}`, sender: Sender.server}
                     ]);
-
+                    
 
                     
                   }
-
-
-
-                  // Add the UI to display the big popup ONLY IF a “mobile view” flag is set
-                  // otherwise, this popup should be size 0 / invisible / hidden / not rendered.
-
-                  // flag should be a useState
-                  // (set Two booleans = False)
-                  
-                  // screenFlag()
-                  // if width > height == True:
-                  // bool laptopScreen = True
-
-
 
                   //console.log("RESPONSE" + response.match.resource_name) 
 
