@@ -7,11 +7,12 @@ import {matchKeywords} from "@/app/ai/backend";
 
 export default function ChatPage() {
   const chatInputRef = useRef<HTMLInputElement>(null);
+  // A list containing all the messages in the chat, as ChatMessage objects to be rendered
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  // A list containing all the user's messages as strings, used for chat history
   const [userMessages, setUserMessages] = useState<string[]>([]);
-  
-  // --- ADD THIS LINE HERE ---
-  const [isSessionActive, setIsSessionActive] = useState(true); 
+  // isSessionActive is true if a current chat is ongoing, false if a match is found
+  const [isSessionActive, setIsSessionActive] = useState(true);
 
   useEffect(() => {
     const scrollView = scrollViewRef.current;
@@ -29,7 +30,7 @@ export default function ChatPage() {
     setUserMessages([]);
     setIsSessionActive(true); // Reset the lock if you clear the chat
   };
-  
+
   const scrollViewRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -40,10 +41,10 @@ export default function ChatPage() {
         })}
       </div>
 
-      <input 
-             disabled={!isSessionActive} 
+      <input
+             disabled={!isSessionActive}
              style={{ cursor: isSessionActive ? 'text' : 'not-allowed', opacity: isSessionActive ? 1 : 0.6 }}
-             
+
              className={"mt-5 mb-5 bg-white rounded-2xl border-[0.5px] border-[#9BA9B0] p-1 mr-5"}
              placeholder={isSessionActive ? "Type your message..." : "Chat ended."}
              ref={chatInputRef}
@@ -61,20 +62,20 @@ export default function ChatPage() {
                   if(response.match == null){
                     setMessages(prevState => [...prevState, {message: response.follow_up_question, sender: Sender.server}]);
                   } else {
-                    setMessages(prevState => [...prevState, 
+                    setMessages(prevState => [...prevState,
                     {message: `Resource found: ${response.match.resource_name}`, sender: Sender.server}
                     ]);
-                    
-                    setIsSessionActive(false); 
+
+                    setIsSessionActive(false);
                     inputRef.value = ""; // Clear the input one last time
                   }
-                 });             
+                 });
                }
              }}/>
-             
-      {/* OPTIONAL: Show a Restart button only when session is inactive */}
+
+      {/* Show a Restart button only when session is inactive */}
       {!isSessionActive && (
-        <button 
+        <button
           onClick={terminateSession}
           className="mr-5 mb-5 p-2 bg-blue-500 text-white rounded-xl"
         >
