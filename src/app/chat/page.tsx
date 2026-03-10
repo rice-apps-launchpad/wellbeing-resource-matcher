@@ -8,6 +8,9 @@ import {Dispatch, SetStateAction, useEffect, useRef, useState} from "react";
 import {ChatMessage, Sender} from "@/data/chat-message";
 import MessageBubble from "@/components/message-bubble";
 import {matchKeywords} from "@/app/ai/backend";
+// Indicator Typing
+import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
+import {TypingIndicator} from "@chatscope/chat-ui-kit-react";
 
 interface ChatPageProps {
   isLaptop: boolean,
@@ -16,12 +19,17 @@ interface ChatPageProps {
 
 // TODO: isLaptop and setIsLaptop are currently unused, but will be used to
 //  conditionally show the big popup inline in the chat if we're on the mobile view.
-export default function ChatPage({ isLaptop, setIsLaptop }: ChatPageProps) {
+export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
+  // A ref to the chat input field so that we can reference the value when we submit a message
   const chatInputRef = useRef<HTMLInputElement>(null);
+  // A ref to the scroll view so that we can auto scroll to the bottom
+  const scrollViewRef = useRef<HTMLDivElement>(null);
   // A list containing all the messages in the chat, as ChatMessage objects to be rendered
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   // A list containing all the user's messages as strings, used for chat history
   const [userMessages, setUserMessages] = useState<string[]>([]);
+  //typing indicator state
+  const [isTyping, setIsTyping] = useState(false);
   // isSessionActive is true if a current chat is ongoing, false if a match is found
   const [isSessionActive, setIsSessionActive] = useState(true);
 
@@ -43,9 +51,8 @@ export default function ChatPage({ isLaptop, setIsLaptop }: ChatPageProps) {
     setMessages([]);
     setUserMessages([]);
     setIsSessionActive(true); // Reset the lock if you clear the chat
+    setIsTyping(false); // Reset typing indicator state when starting a new session
   };
-
-  const scrollViewRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className={"h-screen flex flex-col justify-end bg-[#E8E8E8] pb-5 pl-5"}>
@@ -54,6 +61,12 @@ export default function ChatPage({ isLaptop, setIsLaptop }: ChatPageProps) {
         {messages.map((message, index) => {
           return (<MessageBubble message={message} key={index}/>)
         })}
+        {/* Typing indicator */}
+        {isTyping && (
+          <div className="w-full flex justify-start mb-2">
+            <TypingIndicator content="Owl Resource Matcher is thinking" style={{backgroundColor: 'transparent'}}/>
+          </div>
+        )}
       </div>
 
       <input
@@ -63,32 +76,41 @@ export default function ChatPage({ isLaptop, setIsLaptop }: ChatPageProps) {
         className={"mt-5 mb-5 bg-white rounded-2xl border-[0.5px] border-[#9BA9B0] p-1 mr-5"}
         placeholder={isSessionActive ? "Type your message..." : "Chat ended."}
         ref={chatInputRef}
-        onKeyDown={event => {
+        onKeyDown={async event => {
           if (event.key === "Enter") {
             // If chat input is empty, don't submit
             const inputRef = chatInputRef.current;
-            if (!inputRef || inputRef.value == "" || !isSessionActive) {
+            if (!inputRef || inputRef.value === "" || !isSessionActive) {
               return
             }
 
             // "Submit" the message
-            setMessages(prevState => [...prevState, {message: inputRef.value, sender: Sender.user}]);
-            setUserMessages(prevMes => [...prevMes, inputRef.value])
+            const userText = inputRef.value;
+            setMessages(prevState => [...prevState, {message: userText, sender: Sender.user}]);
+            setUserMessages(prevMes => [...prevMes, userText])
+            inputRef.value = ""; // Clear input immediately
 
-            // Generate response
-            matchKeywords(inputRef.value, userMessages).then((response) => {
+            // Start typing
+            setIsTyping(true);
+
+            try {
+              const response = await matchKeywords(userText, userMessages);
+
               if (response.match == null) {
-                setMessages(prevState => [...prevState, {message: response.follow_up_question, sender: Sender.server}]);
+                setMessages(prev => [...prev, {message: response.follow_up_question, sender: Sender.server}]);
               } else {
-                setMessages(prevState => [...prevState,
-                  {message: `Resource found: ${response.match.resource_name}`, sender: Sender.server}
-                ]);
-
-                // Terminate chat
+                setMessages(prev => [...prev, {
+                  message: `Resource found: ${response.match.resource_name}`,
+                  sender: Sender.server
+                }]);
                 setIsSessionActive(false);
-                inputRef.value = ""; // Clear the input one last time
               }
-            });
+            } finally {
+              // Stop typing
+              setIsTyping(false);
+              // Terminate chat
+              setIsSessionActive(false);
+            }
           }
         }}/>
 
