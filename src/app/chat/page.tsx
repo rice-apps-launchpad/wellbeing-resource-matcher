@@ -108,8 +108,6 @@ export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
             } finally {
               // Stop typing
               setIsTyping(false);
-              // Terminate chat
-              setIsSessionActive(false);
             }
           }
         }}/>

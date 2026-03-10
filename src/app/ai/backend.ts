@@ -1,7 +1,7 @@
 'use server';
 
-import { GoogleGenAI } from "@google/genai";
-import { callSheets } from "@/app/sheets/backend";
+import {GoogleGenAI} from "@google/genai";
+import {callSheets} from "@/app/sheets/backend";
 
 // The client gets the API key from the environment variable `GEMINI_API_KEY`.
 const ai = new GoogleGenAI({
@@ -29,9 +29,9 @@ export async function generateResponse(input: string) {
 export async function matchKeywords(userInput: string, chatHistory: string[]) {
   'use server'
 
-    // const jsonSchema = z.toJSONSchema(resourceSchema);
+  // const jsonSchema = z.toJSONSchema(resourceSchema);
   // Download resource spreadsheet
-  const entireSpreadsheet: string = await callSheets();
+  const entireSpreadsheet = await callSheets();
 
   console.log("chat history:" + chatHistory);
 
@@ -61,38 +61,36 @@ export async function matchKeywords(userInput: string, chatHistory: string[]) {
         type: "OBJECT",
         nullable: true,
         properties: {
-          resource_name: { type: "STRING" },
-          resource_location: { type: "STRING" },
-          contact_info: { type: "STRING" },
-          schedule_link: { type: "STRING" },
-          category: { type: "STRING" }
+          resource_name: {type: "STRING"},
+          resource_location: {type: "STRING"},
+          contact_info: {type: "STRING"},
+          schedule_link: {type: "STRING"},
+          category: {type: "STRING"}
         }
       }
     },
     required: ["status"],
   };
 
-  const keyword = await ai.models.generateContent({
-    model: "gemini-2.5-flash-lite",
-    contents: `The following is the user's input to our application: ${userInput}. The following is the previous chat history: ${chatHistory}
-    
-    Please match the user input with a category from the following spreadsheet: ${entireSpreadsheet} OR ask a clarifying question to better understand the user's needs by providing the user with the above follow-up options to choose from ${followupoptions}. Return either the best-fit category or the clarifying question with the options.
+  // const keyword = await ai.models.generateContent({
+  //   model: "gemini-2.5-flash",
+  //   contents: `The following is the user's input to our application: ${userInput}. The following is the previous chat history: ${chatHistory}
+  //
+  //   Please match the user input with a category from the following spreadsheet: ${entireSpreadsheet} OR ask a clarifying question to better understand the user's needs by providing the user with the above follow-up options to choose from ${followupoptions}. Return either the best-fit category or the clarifying question with the options.
+  //
+  //   Finally, return the recommended category in the format of: Academic, Financial, Student Life, Wellbeing/Health/Safety, Parking and Transportation, Information Technology, or Campus Bookstore
+  //   `,
+  // });
 
-    Finally, return the recommended category in the format of: Academic, Financial, Student Life, Wellbeing/Health/Safety, Parking and Transportation, Information Technology, or Campus Bookstore
-    `,
-  });
+  // console.log(keyword.text);
+  // console.log(keyword.candidates);
+  // console.log(keyword.promptFeedback);
 
-  console.log(keyword.text);
-  console.log(keyword.candidates);
-  console.log(keyword.promptFeedback);
-  
-
-const response = await ai.models.generateContent({
+  const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
     contents: `
     User Input: ${userInput}
-    Spreadsheet Context: ${entireSpreadsheet}
-    Suggested Category: ${keyword.text}
+    Spreadsheet Context: ${JSON.stringify(entireSpreadsheet)}
 
     Instructions:
     1. If the input is clear, find the best resource and set status to 'MATCH_FOUND'.
