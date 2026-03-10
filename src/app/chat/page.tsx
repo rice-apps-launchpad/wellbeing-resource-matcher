@@ -4,17 +4,22 @@ This will be the "chat" page for both desktop and mobile! It can take infinitely
 automatically.
  */
 
-import {useEffect, useRef, useState} from "react";
+import {Dispatch, SetStateAction, useEffect, useRef, useState} from "react";
 import {ChatMessage, Sender} from "@/data/chat-message";
 import MessageBubble from "@/components/message-bubble";
 import {matchKeywords} from "@/app/ai/backend";
 
+interface ChatPageProps {
+  isLaptop: boolean,
+  setIsLaptop: Dispatch<SetStateAction<boolean>>,
+}
 
-export default function ChatPage() {
+// TODO: isLaptop and setIsLaptop are currently unused, but will be used to
+//  conditionally show the big popup inline in the chat if we're on the mobile view.
+export default function ChatPage({ isLaptop, setIsLaptop }: ChatPageProps) {
   const chatInputRef = useRef<HTMLInputElement>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [userMessages, setUserMessages] = useState<string[]>([]);
-
 
   // When `messages` changes, we might need to scroll to bottom
   useEffect(() => {
@@ -35,7 +40,7 @@ export default function ChatPage() {
   const scrollViewRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className={"w-100 h-screen flex flex-col justify-end bg-[#E8E8E8] pb-5 pl-5"}>
+    <div className={"h-screen flex flex-col justify-end bg-[#E8E8E8] pb-5 pl-5"}>
       {/* This div holds all the messages */}
       <div ref={scrollViewRef} className={"flex flex-col items-end gap-3 overflow-scroll pr-5"}>
         {messages.map((message, index) => {
@@ -70,11 +75,14 @@ export default function ChatPage() {
                     setMessages(prevState => [...prevState, 
                     {message: `Resource found: ${response.match.resource_name}`, sender: Sender.server}
                     ]);
-                    //terminate chat here
+                    
+
                     
                   }
 
                   //console.log("RESPONSE" + response.match.resource_name) 
+
+
 
                  });             
                  

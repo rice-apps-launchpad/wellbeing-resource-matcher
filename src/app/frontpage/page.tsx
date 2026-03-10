@@ -1,7 +1,6 @@
 import MessageBubble from "@/components/message-bubble";
 import {Sender} from "@/data/chat-message";
 
-
 export default function TestPage() {
   return (
     <div>

@@ -1,21 +1,28 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import SmallPopup from "@/components/small-popup/small-popup";
-import { callSheets } from "@/app/sheets/backend";
+import {callSheets} from "@/app/sheets/backend";
 
 const styles = {
+  gridTitle: {
+    color: "#7C7E7F",
+    textAlign: "center",
+    fontFamily: "Noto Serif",
+    maxWidth: "900px",
+    fontSize: "45px",
+  },
   layoutWrapper: {
     width: "100%",
-    maxWidth: "900px",
-    margin: "0 auto",
+    margin: "0",
     padding: "40px",
-    backgroundColor: "#ffffff",
     boxSizing: "border-box",
   },
   gridContainer: {
     display: "grid",
-    gridTemplateColumns: "repeat(2, 1fr)",
+    textAlign: "start",
+    gridTemplateColumns: "repeat(auto-fit, 380px)",
+    justifyContent: "start",
     gap: "48px",
     width: "100%",
   },
@@ -36,23 +43,30 @@ export default function Page() {
         setIsLoading(false);
       }
     }
+
     loadResources();
   }, []);
 
-  if (isLoading) return <div style={{ padding: "40px" }}>Loading Rice Resources...</div>;
+  if (isLoading) return <div style={{padding: "40px"}}>Loading Rice Resources...</div>;
 
   return (
-    <div style={styles.layoutWrapper}>
-      <div style={styles.gridContainer}>
-        {resources.map((resource, index) => (
-          <SmallPopup
-            key={index}
-            image={resource.image.startsWith('/') ? resource.image : `/${resource.image}`}
-            title={resource.title}
-            descrip={resource.descrip}
-          />
-        ))}
+    <div style={styles.gridTitle}>
+      <h1>
+        <b>Resource Matcher</b>
+      </h1>
+      <div style={styles.layoutWrapper}>
+        <div style={styles.gridContainer}>
+          {resources.map((resource, index) => (
+            <SmallPopup
+              key={index}
+              image={resource.image.startsWith('/') ? resource.image : `/${resource.image}`}
+              title={resource.title}
+              descrip={resource.descrip}
+            />
+          ))}
+        </div>
       </div>
     </div>
-  );
+  )
+    ;
 }

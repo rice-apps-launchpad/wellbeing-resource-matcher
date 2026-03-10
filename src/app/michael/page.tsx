@@ -1,22 +1,39 @@
-import SmallPopup from "@/components/small_popup/small_popup"
-export default function Page() {
-    return(
-      
-       <SmallPopup image = "lovett.jpg" title = "Petitions & Special Requests" descrip = "https://dou.rice.edu/student-resources/academic/petitions-special-requests"/>
-    )
-}
-
-
-
+'use client';
 import DesktopLayout from "@/components/layout";
 import MatchLayout from "@/app/devi/page"
 import ChatPage from "@/app/chat/page"
+import {useState, useEffect} from "react";
 
 export default function Page() {
+  // new for laptop-mobile screen changing
+  // set to false initially -> if screen detects a laptop view-> switch
+  const [isLaptop, setLaptop] = useState(false)
+
+  useEffect(() => {
+    const handleResize = () => {
+      setLaptop(window.innerWidth >= window.innerHeight);
+    };
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+
+  if (!isLaptop) {
+    return (
+      <main className="w-full h-screen">
+        <ChatPage isLaptop={isLaptop} setIsLaptop={setLaptop}/>
+      </main>
+    );
+  }
+
   return (
     <DesktopLayout
-      leftContent={<div><MatchLayout></MatchLayout></div>}
-      chatContent={<div><ChatPage></ChatPage></div>}
+      leftContent={<div><MatchLayout/></div>}
+      chatContent={<div><ChatPage isLaptop={isLaptop} setIsLaptop={setLaptop}/></div>}
     />
   );
 }
