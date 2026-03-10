@@ -42,6 +42,7 @@ export default function ChatPage() {
 
   return (
     <div className={"w-100 h-screen flex flex-col justify-end bg-[#E8E8E8] pb-5 pl-5"}>
+      {/* This div holds all the messages */}
       <div ref={scrollViewRef} className={"flex flex-col items-end gap-3 overflow-scroll pr-5"}>
         {messages.map((message, index) => {
           return (<MessageBubble message={message} key={index}/>)
@@ -57,14 +58,17 @@ export default function ChatPage() {
         ref={chatInputRef}
         onKeyDown={event => {
           if (event.key === "Enter") {
+            // If chat input is empty, don't submit
             const inputRef = chatInputRef.current;
             if (!inputRef || inputRef.value == "" || !isSessionActive) {
               return
             }
 
+            // "Submit" the message
             setMessages(prevState => [...prevState, {message: inputRef.value, sender: Sender.user}]);
             setUserMessages(prevMes => [...prevMes, inputRef.value])
 
+            // Generate response
             matchKeywords(inputRef.value, userMessages).then((response) => {
               if (response.match == null) {
                 setMessages(prevState => [...prevState, {message: response.follow_up_question, sender: Sender.server}]);
@@ -73,6 +77,7 @@ export default function ChatPage() {
                   {message: `Resource found: ${response.match.resource_name}`, sender: Sender.server}
                 ]);
 
+                // Terminate chat
                 setIsSessionActive(false);
                 inputRef.value = ""; // Clear the input one last time
               }
