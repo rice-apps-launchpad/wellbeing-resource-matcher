@@ -14,15 +14,12 @@ interface ChatPageProps {
   setIsLaptop: Dispatch<SetStateAction<boolean>>,
 }
 
-export default function ChatPage({ props }: ChatPageProps) {
+// TODO: isLaptop and setIsLaptop are currently unused, but will be used to
+//  conditionally show the big popup inline in the chat if we're on the mobile view.
+export default function ChatPage({ isLaptop, setIsLaptop }: ChatPageProps) {
   const chatInputRef = useRef<HTMLInputElement>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [userMessages, setUserMessages] = useState<string[]>([]);
-
-  // new for laptop-mobile screen changing
-  // set to false intially -> if screen detetcs a laptop view-> switch
-
-  
 
   // When `messages` changes, we might need to scroll to bottom
   useEffect(() => {
