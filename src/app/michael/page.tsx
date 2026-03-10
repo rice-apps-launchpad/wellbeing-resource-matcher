@@ -10,7 +10,7 @@ export default function Page() {
   const [isLaptop, setLaptop] = useState(false)
 
   useEffect(() => {
-     const handleResize = () => {
+    const handleResize = () => {
       setLaptop(window.innerWidth >= window.innerHeight);
     };
 
@@ -25,15 +25,15 @@ export default function Page() {
   if (!isLaptop) {
     return (
       <main className="w-full h-screen">
-        <ChatPage isLaptop={isLaptop} setIsLaptop={setLaptop} />
+        <ChatPage isLaptop={isLaptop} setIsLaptop={setLaptop}/>
       </main>
     );
   }
 
   return (
     <DesktopLayout
-      leftContent={<div><MatchLayout /></div>}
-      chatContent={<div><ChatPage isLaptop={isLaptop} setIsLaptop={setLaptop} /></div>}
+      leftContent={<div><MatchLayout/></div>}
+      chatContent={<div><ChatPage isLaptop={isLaptop} setIsLaptop={setLaptop}/></div>}
     />
   );
 }
