@@ -61,7 +61,7 @@ export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
         {messages.map((message, index) => {
           return (<MessageBubble message={message} key={index}/>)
         })}
-        {/* --- RENDER TYPING INDICATOR HERE --- */}
+        {/* Typing indicator */}
         {isTyping && (
           <div className="w-full flex justify-start mb-2">
             <TypingIndicator content="Owl Resource Matcher is thinking" style={{backgroundColor: 'transparent'}}/>
@@ -90,7 +90,7 @@ export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
             setUserMessages(prevMes => [...prevMes, userText])
             inputRef.value = ""; // Clear input immediately
 
-            // START TYPING
+            // Start typing
             setIsTyping(true);
 
             try {
