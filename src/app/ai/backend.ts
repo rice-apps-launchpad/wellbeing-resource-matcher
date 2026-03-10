@@ -31,7 +31,7 @@ export async function matchKeywords(userInput: string, chatHistory: string[]) {
 
   // const jsonSchema = z.toJSONSchema(resourceSchema);
   // Download resource spreadsheet
-  const entireSpreadsheet: string = await callSheets();
+  const entireSpreadsheet = await callSheets();
 
   console.log("chat history:" + chatHistory);
 
