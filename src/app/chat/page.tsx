@@ -8,7 +8,7 @@ import {Dispatch, SetStateAction, useEffect, useRef, useState} from "react";
 import {ChatMessage, Sender} from "@/data/chat-message";
 import MessageBubble from "@/components/message-bubble";
 import {matchKeywords} from "@/app/ai/backend";
-//Indicator Typing
+// Indicator Typing
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import {TypingIndicator} from "@chatscope/chat-ui-kit-react";
 
@@ -106,7 +106,7 @@ export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
                 setIsSessionActive(false);
               }
             } finally {
-              // STOP TYPING
+              // Stop typing
               setIsTyping(false);
               // Terminate chat
               setIsSessionActive(false);
