@@ -1,4 +1,4 @@
-'use client'; // double check this
+'use client';
 /*
 This will be the "chat" page for both desktop and mobile! It can take infinitely many messages and scrolls
 automatically.
@@ -18,10 +18,15 @@ interface ChatPageProps {
 //  conditionally show the big popup inline in the chat if we're on the mobile view.
 export default function ChatPage({ isLaptop, setIsLaptop }: ChatPageProps) {
   const chatInputRef = useRef<HTMLInputElement>(null);
+  // A list containing all the messages in the chat, as ChatMessage objects to be rendered
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  // A list containing all the user's messages as strings, used for chat history
   const [userMessages, setUserMessages] = useState<string[]>([]);
+  // isSessionActive is true if a current chat is ongoing, false if a match is found
+  const [isSessionActive, setIsSessionActive] = useState(true);
 
   // When `messages` changes, we might need to scroll to bottom
+  // TODO: I don't think this is currently working!
   useEffect(() => {
     // https://stackoverflow.com/a/21067431
     const scrollView = scrollViewRef.current;
@@ -35,8 +40,11 @@ export default function ChatPage({ isLaptop, setIsLaptop }: ChatPageProps) {
   }, [messages]);
 
   const terminateSession = () => {
-    setMessages([]); // Clears history so the next chat starts fresh
+    setMessages([]);
+    setUserMessages([]);
+    setIsSessionActive(true); // Reset the lock if you clear the chat
   };
+
   const scrollViewRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -47,52 +55,52 @@ export default function ChatPage({ isLaptop, setIsLaptop }: ChatPageProps) {
           return (<MessageBubble message={message} key={index}/>)
         })}
       </div>
-      <input className={"mt-5 mb-5 bg-white rounded-2xl border-[0.5px] border-[#9BA9B0] p-1 mr-5"}
-             placeholder={"Type your message..."}
-             ref={chatInputRef}
-             onKeyDown={event => {
-               if (event.key === "Enter") {
-                 // If chat input is empty, don't submit
-                 const inputRef = chatInputRef.current;
-                 if (!inputRef) {
-                   return
-                 }
-                 if (inputRef.value == "") {
-                   return
-                 }
-                 // "Submit" the message
-                 setMessages(prevState => [...prevState, {message: inputRef.value, sender: Sender.user}]);
-                 setUserMessages(prevMes => [...prevMes, inputRef.value])
 
+      <input
+        disabled={!isSessionActive}
+        style={{cursor: isSessionActive ? 'text' : 'not-allowed', opacity: isSessionActive ? 1 : 0.6}}
 
-                 // Generate response
-                 matchKeywords(inputRef.value, userMessages).then((response) => {
-                  if(response.match == null){
-                    setMessages(prevState => [...prevState, {message: response.follow_up_question, sender: Sender.server}]);
-                    console.log(messages)
+        className={"mt-5 mb-5 bg-white rounded-2xl border-[0.5px] border-[#9BA9B0] p-1 mr-5"}
+        placeholder={isSessionActive ? "Type your message..." : "Chat ended."}
+        ref={chatInputRef}
+        onKeyDown={event => {
+          if (event.key === "Enter") {
+            // If chat input is empty, don't submit
+            const inputRef = chatInputRef.current;
+            if (!inputRef || inputRef.value == "" || !isSessionActive) {
+              return
+            }
 
-                  } else {
-                    setMessages(prevState => [...prevState, 
-                    {message: `Resource found: ${response.match.resource_name}`, sender: Sender.server}
-                    ]);
-                    
+            // "Submit" the message
+            setMessages(prevState => [...prevState, {message: inputRef.value, sender: Sender.user}]);
+            setUserMessages(prevMes => [...prevMes, inputRef.value])
 
-                    
-                  }
+            // Generate response
+            matchKeywords(inputRef.value, userMessages).then((response) => {
+              if (response.match == null) {
+                setMessages(prevState => [...prevState, {message: response.follow_up_question, sender: Sender.server}]);
+              } else {
+                setMessages(prevState => [...prevState,
+                  {message: `Resource found: ${response.match.resource_name}`, sender: Sender.server}
+                ]);
 
-                  //console.log("RESPONSE" + response.match.resource_name) 
+                // Terminate chat
+                setIsSessionActive(false);
+                inputRef.value = ""; // Clear the input one last time
+              }
+            });
+          }
+        }}/>
 
-
-
-                 });             
-                 
-               }
-             }}/>
+      {/* Show a Restart button only when session is inactive */}
+      {!isSessionActive && (
+        <button
+          onClick={terminateSession}
+          className="mr-5 mb-5 p-2 bg-blue-500 text-white rounded-xl"
+        >
+          Start New Search
+        </button>
+      )}
     </div>
   )
 }
-
-
-
-
-
