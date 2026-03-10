@@ -10,7 +10,7 @@ import MessageBubble from "@/components/message-bubble";
 import {matchKeywords} from "@/app/ai/backend";
 //Indicator Typing
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
-import { TypingIndicator } from "@chatscope/chat-ui-kit-react";
+import {TypingIndicator} from "@chatscope/chat-ui-kit-react";
 
 interface ChatPageProps {
   isLaptop: boolean,
@@ -19,7 +19,7 @@ interface ChatPageProps {
 
 // TODO: isLaptop and setIsLaptop are currently unused, but will be used to
 //  conditionally show the big popup inline in the chat if we're on the mobile view.
-export default function ChatPage({ isLaptop, setIsLaptop }: ChatPageProps) {
+export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
   const chatInputRef = useRef<HTMLInputElement>(null);
   const scrollViewRef = useRef<HTMLDivElement>(null);
   // A list containing all the messages in the chat, as ChatMessage objects to be rendered
@@ -62,7 +62,7 @@ export default function ChatPage({ isLaptop, setIsLaptop }: ChatPageProps) {
         {/* --- RENDER TYPING INDICATOR HERE --- */}
         {isTyping && (
           <div className="w-full flex justify-start mb-2">
-             <TypingIndicator content="Owl Resource Matcher is thinking" style={{ backgroundColor: 'transparent' }} />
+            <TypingIndicator content="Owl Resource Matcher is thinking" style={{backgroundColor: 'transparent'}}/>
           </div>
         )}
       </div>
@@ -95,9 +95,12 @@ export default function ChatPage({ isLaptop, setIsLaptop }: ChatPageProps) {
               const response = await matchKeywords(userText, userMessages);
 
               if (response.match == null) {
-                setMessages(prev => [...prev, { message: response.follow_up_question, sender: Sender.server }]);
+                setMessages(prev => [...prev, {message: response.follow_up_question, sender: Sender.server}]);
               } else {
-                setMessages(prev => [...prev, { message: `Resource found: ${response.match.resource_name}`, sender: Sender.server }]);
+                setMessages(prev => [...prev, {
+                  message: `Resource found: ${response.match.resource_name}`,
+                  sender: Sender.server
+                }]);
                 setIsSessionActive(false);
               }
             } finally {
