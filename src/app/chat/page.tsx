@@ -1,4 +1,8 @@
 'use client';
+/*
+This will be the "chat" page for both desktop and mobile! It can take infinitely many messages and scrolls
+automatically.
+ */
 
 import {useEffect, useRef, useState} from "react";
 import {ChatMessage, Sender} from "@/data/chat-message";
@@ -14,7 +18,10 @@ export default function ChatPage() {
   // isSessionActive is true if a current chat is ongoing, false if a match is found
   const [isSessionActive, setIsSessionActive] = useState(true);
 
+  // When `messages` changes, we might need to scroll to bottom
+  // TODO: I don't think this is currently working!
   useEffect(() => {
+    // https://stackoverflow.com/a/21067431
     const scrollView = scrollViewRef.current;
     if (!scrollView) return;
     console.log(scrollView.scrollHeight)
