@@ -20,7 +20,9 @@ interface ChatPageProps {
 // TODO: isLaptop and setIsLaptop are currently unused, but will be used to
 //  conditionally show the big popup inline in the chat if we're on the mobile view.
 export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
+  // A ref to the chat input field so that we can reference the value when we submit a message
   const chatInputRef = useRef<HTMLInputElement>(null);
+  // A ref to the scroll view so that we can auto scroll to the bottom
   const scrollViewRef = useRef<HTMLDivElement>(null);
   // A list containing all the messages in the chat, as ChatMessage objects to be rendered
   const [messages, setMessages] = useState<ChatMessage[]>([]);
