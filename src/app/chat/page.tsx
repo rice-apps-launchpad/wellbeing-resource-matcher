@@ -42,36 +42,36 @@ export default function ChatPage() {
       </div>
 
       <input
-             disabled={!isSessionActive}
-             style={{ cursor: isSessionActive ? 'text' : 'not-allowed', opacity: isSessionActive ? 1 : 0.6 }}
+        disabled={!isSessionActive}
+        style={{cursor: isSessionActive ? 'text' : 'not-allowed', opacity: isSessionActive ? 1 : 0.6}}
 
-             className={"mt-5 mb-5 bg-white rounded-2xl border-[0.5px] border-[#9BA9B0] p-1 mr-5"}
-             placeholder={isSessionActive ? "Type your message..." : "Chat ended."}
-             ref={chatInputRef}
-             onKeyDown={event => {
-               if (event.key === "Enter") {
-                 const inputRef = chatInputRef.current;
-                 if (!inputRef || inputRef.value == "" || !isSessionActive) {
-                   return
-                 }
+        className={"mt-5 mb-5 bg-white rounded-2xl border-[0.5px] border-[#9BA9B0] p-1 mr-5"}
+        placeholder={isSessionActive ? "Type your message..." : "Chat ended."}
+        ref={chatInputRef}
+        onKeyDown={event => {
+          if (event.key === "Enter") {
+            const inputRef = chatInputRef.current;
+            if (!inputRef || inputRef.value == "" || !isSessionActive) {
+              return
+            }
 
-                 setMessages(prevState => [...prevState, {message: inputRef.value, sender: Sender.user}]);
-                 setUserMessages(prevMes => [...prevMes, inputRef.value])
+            setMessages(prevState => [...prevState, {message: inputRef.value, sender: Sender.user}]);
+            setUserMessages(prevMes => [...prevMes, inputRef.value])
 
-                 matchKeywords(inputRef.value, userMessages).then((response) => {
-                  if(response.match == null){
-                    setMessages(prevState => [...prevState, {message: response.follow_up_question, sender: Sender.server}]);
-                  } else {
-                    setMessages(prevState => [...prevState,
-                    {message: `Resource found: ${response.match.resource_name}`, sender: Sender.server}
-                    ]);
+            matchKeywords(inputRef.value, userMessages).then((response) => {
+              if (response.match == null) {
+                setMessages(prevState => [...prevState, {message: response.follow_up_question, sender: Sender.server}]);
+              } else {
+                setMessages(prevState => [...prevState,
+                  {message: `Resource found: ${response.match.resource_name}`, sender: Sender.server}
+                ]);
 
-                    setIsSessionActive(false);
-                    inputRef.value = ""; // Clear the input one last time
-                  }
-                 });
-               }
-             }}/>
+                setIsSessionActive(false);
+                inputRef.value = ""; // Clear the input one last time
+              }
+            });
+          }
+        }}/>
 
       {/* Show a Restart button only when session is inactive */}
       {!isSessionActive && (
