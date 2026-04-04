@@ -8,6 +8,7 @@ import {Dispatch, SetStateAction, useEffect, useRef, useState} from "react";
 import {ChatMessage, Sender} from "@/data/chat-message";
 import MessageBubble from "@/components/message-bubble";
 import {matchKeywords} from "@/app/ai/backend";
+import {Match} from "@/data/chat-message"
 // Indicator Typing
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import {TypingIndicator} from "@chatscope/chat-ui-kit-react";
@@ -15,6 +16,7 @@ import {TypingIndicator} from "@chatscope/chat-ui-kit-react";
 interface ChatPageProps {
   isLaptop: boolean,
   setIsLaptop: Dispatch<SetStateAction<boolean>>,
+  setMatch: Dispatch<SetStateAction<Match>>,
 }
 
 // TODO: isLaptop and setIsLaptop are currently unused, but will be used to
@@ -103,6 +105,7 @@ export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
                   message: `Resource found: ${response.match.resource_name}`,
                   sender: Sender.server
                 }]);
+
                 setIsSessionActive(false);
               }
             } finally {
