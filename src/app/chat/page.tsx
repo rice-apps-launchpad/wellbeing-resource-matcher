@@ -8,7 +8,7 @@ import {Dispatch, SetStateAction, useEffect, useRef, useState} from "react";
 import {ChatMessage, Sender} from "@/data/chat-message";
 import MessageBubble from "@/components/message-bubble";
 import {matchKeywords} from "@/app/ai/backend";
-import followups from "./followups.json";
+import followups from "@/app/ai/followups.json";
 // Indicator Typing
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import {TypingIndicator} from "@chatscope/chat-ui-kit-react";
@@ -88,7 +88,7 @@ export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
             // "Submit" the message
             const userText = inputRef.value;
             setMessages(prevState => [...prevState, {message: userText, sender: Sender.user}]);
-            setHistoryMessages(prevMes => [...prevMes, userText])
+            setHistoryMessages(prevMes => [...prevMes, "User: " + userText])
             inputRef.value = ""; // Clear input immediately
 
             // Start typing
@@ -96,14 +96,21 @@ export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
 
             try {
               const response = await matchKeywords(userText, historyMessages);
+              
+              
 
               if (response.match == null) {
                 // If there's no match, there's a follow-up question
-                const followUpId: number = response.follow_up_question
-                console.log(followups[followUpId])
+                if (!(response.follow_up_question) == null){
+                
+                }
+                const followUpId: string = response.follow_up_question
+                // console.log(followups[followUpId])
 
-                setMessages(prev => [...prev, {message: response.follow_up_question, sender: Sender.server}]);
-                setHistoryMessages(prevMes => [...prevMes, response.follow_up_question])
+
+                setMessages(prev => [...prev, {message: followups[followUpId  as keyof typeof followups], sender: Sender.server}]);
+                setHistoryMessages(prevMes => [...prevMes, "AI: " + followups[followUpId  as keyof typeof followups]])
+                console.log(setHistoryMessages)
               } else {
                 setMessages(prev => [...prev, {
                   message: `Resource found: ${response.match.resource_name}`,

@@ -2,7 +2,7 @@
 
 import {GoogleGenAI} from "@google/genai";
 import {callSheets} from "@/app/sheets/backend";
-import followups from "./followups.json";
+import followups from "@/app/ai/followups.json";
 
 // The client gets the API key from the environment variable `GEMINI_API_KEY`.
 const ai = new GoogleGenAI({
@@ -85,6 +85,9 @@ export async function matchKeywords(userInput: string, chatHistory: string[]) {
       responseJsonSchema: resourceSchema,
     },
   });
+
+  
+
   if (!response.text) {
     return "No response from AI";
   }
