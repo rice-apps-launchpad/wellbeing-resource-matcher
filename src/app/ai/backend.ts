@@ -1,46 +1,25 @@
 'use server';
 
-import { GoogleGenAI } from "@google/genai";
-import { callSheets } from "@/app/sheets/backend";
+import {GoogleGenAI} from "@google/genai";
+import {callSheets} from "@/app/sheets/backend";
+import followups from "./followups.json";
 
 // The client gets the API key from the environment variable `GEMINI_API_KEY`.
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY!,
 });
 
-//define server function
-export async function generateResponse(input: string) {
-  'use server'
-
-  const response = await ai.models.generateContent({
-    model: "gemini-3-flash",
-    contents: `${input}`,
-  });
-  console.log(response.text);
-
-  return response.text;
-}
-
-// function callSheets(): string {
-
-// }
-
 
 export async function matchKeywords(userInput: string, chatHistory: string[]) {
   'use server'
 
-    // const jsonSchema = z.toJSONSchema(resourceSchema);
+  // const jsonSchema = z.toJSONSchema(resourceSchema);
   // Download resource spreadsheet
-  const entireSpreadsheet: string = await callSheets();
+  const entireSpreadsheet = await callSheets();
 
-  const followupoptions = {
-    1: "Can you please provide more details about the issue you're facing?",
-    2: "Could you specify which department or service you're trying to access?",
-    3: "Are you looking for information on a specific resource or just general guidance?",
-    4: "Can you tell me if this is an urgent matter or if it can wait?",
-    5: "Is there a particular time frame you're working with for this issue?",
-    6: "Do you prefer on-campus resources, or off-campus as well?",
-  };
+  console.log("chat history:" + chatHistory);
+
+
 
   const resourceSchema = {
     type: "OBJECT",
@@ -72,32 +51,36 @@ export async function matchKeywords(userInput: string, chatHistory: string[]) {
     required: ["status"],
   };
 
-  const keyword = await ai.models.generateContent({
-    model: "gemini-2.5-flash-lite",
-    contents: `The following is the user's input to our application: ${userInput}. The following is the previous chat history: ${chatHistory}
-    
-    Please match the user input with a category from the following spreadsheet: ${entireSpreadsheet} OR ask a clarifying question to better understand the user's needs by providing the user with the above follow-up options to choose from ${followupoptions}. Return either the best-fit category or the clarifying question with the options.
+  // const keyword = await ai.models.generateContent({
+  //   model: "gemini-2.5-flash",
+  //   contents: `The following is the user's input to our application: ${userInput}. The following is the previous chat history: ${chatHistory}
+  //
+  //   Please match the user input with a category from the following spreadsheet: ${entireSpreadsheet} OR ask a clarifying question to better understand the user's needs by providing the user with the above follow-up options to choose from ${followupoptions}. Return either the best-fit category or the clarifying question with the options.
+  //
+  //   Finally, return the recommended category in the format of: Academic, Financial, Student Life, Wellbeing/Health/Safety, Parking and Transportation, Information Technology, or Campus Bookstore
+  //   `,
+  // });
 
-    Finally, return the recommended category in the format of: Academic, Financial, Student Life, Wellbeing/Health/Safety, Parking and Transportation, Information Technology, or Campus Bookstore
-    `,
-  });
+  // console.log(keyword.text);
+  // console.log(keyword.candidates);
+  // console.log(keyword.promptFeedback);
 
-  console.log(keyword.text);
-  console.log(keyword.candidates);
-  console.log(keyword.promptFeedback);
-  console.log("chat history:" + chatHistory);
-
-const response = await ai.models.generateContent({
+  const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
     contents: `
+    Chat History: ${chatHistory}
     User Input: ${userInput}
-    Spreadsheet Context: ${entireSpreadsheet}
-    Suggested Category: ${keyword.text}
 
     Instructions:
-    1. If the input is clear, find the best resource and set status to 'MATCH_FOUND'.
-    2. If the input is vague, set status to 'NEEDS_CLARIFICATION' and select the most appropriate ID (1-6) from the following options:
-    ${JSON.stringify(followupoptions, null, 2)}
+    You should try to match the user's needs to the best resource available at Rice University. 
+    1. If there is a clear match, choose the best resource and set status to 'MATCH_FOUND'.
+    2. If you think you need more details, set status to 'NEEDS_CLARIFICATION' and select the most appropriate ID (0–140) from the following options for follow-up questions:
+    ${JSON.stringify(followups)}
+    
+    Don't be afraid to ask multiple follow up questions. Never ask a duplicate follow-up question.
+    
+    Here is the database of resources you can choose from:
+    ${JSON.stringify(entireSpreadsheet)}
     `,
     config: {
       responseMimeType: "application/json",

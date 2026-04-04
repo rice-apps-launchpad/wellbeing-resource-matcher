@@ -1,4 +1,4 @@
-"use client"; // double check this
+'use client';
 /*
 This will be the "chat" page for both desktop and mobile! It can take infinitely many messages and scrolls
 automatically.
@@ -7,7 +7,10 @@ automatically.
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { ChatMessage, Sender } from "@/data/chat-message";
 import MessageBubble from "@/components/message-bubble";
-import { matchKeywords } from "@/app/ai/backend";
+import {matchKeywords} from "@/app/ai/backend";
+// Indicator Typing
+import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
+import {TypingIndicator} from "@chatscope/chat-ui-kit-react";
 import BigPopup from "@/components/big-popup/big-popup";
 import BigPopupMobile from "@/components/big-popup/big-popup-mobile";
 
@@ -16,15 +19,24 @@ interface ChatPageProps {
   setIsLaptop: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function ChatPage({ isLaptop, setIsLaptop }: ChatPageProps) {
+// TODO: isLaptop and setIsLaptop are currently unused, but will be used to
+//  conditionally show the big popup inline in the chat if we're on the mobile view.
+export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
+  // A ref to the chat input field so that we can reference the value when we submit a message
   const chatInputRef = useRef<HTMLInputElement>(null);
+  // A ref to the scroll view so that we can auto scroll to the bottom
+  const scrollViewRef = useRef<HTMLDivElement>(null);
+  // A list containing all the messages in the chat, as ChatMessage objects to be rendered
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  // A list containing all the user's messages as strings, used for chat history
   const [userMessages, setUserMessages] = useState<string[]>([]);
-
-  // new for laptop-mobile screen changing
-  // set to false intially -> if screen detetcs a laptop view-> switch
+  //typing indicator state
+  const [isTyping, setIsTyping] = useState(false);
+  // isSessionActive is true if a current chat is ongoing, false if a match is found
+  const [isSessionActive, setIsSessionActive] = useState(true);
 
   // When `messages` changes, we might need to scroll to bottom
+  // TODO: I don't think this is currently working!
   useEffect(() => {
     // https://stackoverflow.com/a/21067431
     const scrollView = scrollViewRef.current;
@@ -40,16 +52,14 @@ export default function ChatPage({ isLaptop, setIsLaptop }: ChatPageProps) {
   }, [messages]);
 
   const terminateSession = () => {
-    setMessages([]); // Clears history so the next chat starts fresh
+    setMessages([]);
+    setUserMessages([]);
+    setIsSessionActive(true); // Reset the lock if you clear the chat
+    setIsTyping(false); // Reset typing indicator state when starting a new session
   };
-  const scrollViewRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div
-      className={
-        "w-100 h-screen flex flex-col justify-end bg-[#E8E8E8] pb-5 pl-5"
-      }
-    >
+    <div className={"h-screen flex flex-col justify-end bg-[#E8E8E8] pb-5 pl-5"}>
       {/* This div holds all the messages */}
       <div
         ref={scrollViewRef}
@@ -62,55 +72,54 @@ export default function ChatPage({ isLaptop, setIsLaptop }: ChatPageProps) {
           } else if (chatMessage.match != null) {
             return <BigPopupMobile
             key={index}
-            title={chatMessage.match.title} 
-            description={chatMessage.match.description} 
-            imageSrc={chatMessage.match?.imageSrc} 
-            />; 
+            title={chatMessage.match.title}
+            description={chatMessage.match.description}
+            imageSrc={chatMessage.match?.imageSrc}
+            />;
           }
         })}
+        {/* Typing indicator */}
+        {isTyping && (
+          <div className="w-full flex justify-start mb-2">
+            <TypingIndicator content="Owl Resource Matcher is thinking" style={{backgroundColor: 'transparent'}}/>
+          </div>
+        )}
       </div>
+
       <input
-        className={
-          "mt-5 mb-5 bg-white rounded-2xl border-[0.5px] border-[#9BA9B0] p-1 mr-5"
-        }
-        placeholder={"Type your message..."}
+        disabled={!isSessionActive}
+        style={{cursor: isSessionActive ? 'text' : 'not-allowed', opacity: isSessionActive ? 1 : 0.6}}
+
+        className={"mt-5 mb-5 bg-white rounded-2xl border-[0.5px] border-[#9BA9B0] p-1 mr-5"}
+        placeholder={isSessionActive ? "Type your message..." : "Chat ended."}
         ref={chatInputRef}
-        onKeyDown={(event) => {
+        onKeyDown={async event => {
           if (event.key === "Enter") {
             // If chat input is empty, don't submit
             const inputRef = chatInputRef.current;
-            if (!inputRef) {
-              return;
+            if (!inputRef || inputRef.value === "" || !isSessionActive) {
+              return
             }
-            if (inputRef.value == "") {
-              return;
-            }
-            // "Submit" the message
-            setMessages((prevState) => [
-              ...prevState,
-              { message: inputRef.value, sender: Sender.user },
-            ]);
-            setUserMessages((prevMes) => [...prevMes, inputRef.value]);
 
-            // Generate response
-            matchKeywords(inputRef.value, userMessages).then((response) => {
+            // "Submit" the message
+            const userText = inputRef.value;
+            setMessages(prevState => [...prevState, {message: userText, sender: Sender.user}]);
+            setUserMessages(prevMes => [...prevMes, userText])
+            inputRef.value = ""; // Clear input immediately
+
+            // Start typing
+            setIsTyping(true);
+
+            try {
+              const response = await matchKeywords(userText, userMessages);
+
               if (response.match == null) {
-                setMessages((prevState) => [
-                  ...prevState,
-                  {
-                    message: response.follow_up_question,
-                    sender: Sender.server,
-                  },
-                ]);
-                console.log(messages);
+                setMessages(prev => [...prev, {message: response.follow_up_question, sender: Sender.server}]);
               } else {
-                // big pop up appear
-                setMessages((prevState) => [
-                  ...prevState,
-                  {
-                    message: `Resource found: ${response.match.resource_name}`,
-                    sender: Sender.server,
-                  },
+                setMessages(prev => [...prev, {
+                  message: `Resource found: ${response.match.resource_name}`,
+                  sender: Sender.server
+                },
                   {
                     match: {
                       imageSrc: "",
@@ -119,15 +128,30 @@ export default function ChatPage({ isLaptop, setIsLaptop }: ChatPageProps) {
                       description: response.match.descripition,
                     },
                     sender: Sender.server,
-                  },
-                ]);
+                  },]);
+                setIsSessionActive(false);
               }
-
-              //console.log("RESPONSE" + response.match.resource_name)
-            });
+            } finally {
+              // Stop typing
+              setIsTyping(false);
+            }
           }
-        }}
-      />
+        }}/>
+
+      {/* Show a Restart button only when session is inactive */}
+      {!isSessionActive && (
+        <button
+          onClick={terminateSession}
+          className="mr-5 mb-5 p-2 bg-blue-500 text-white rounded-xl"
+        >
+          Start New Search
+        </button>
+      )}
     </div>
   );
 }
+
+
+
+
+
