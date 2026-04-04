@@ -30,8 +30,8 @@ export async function matchKeywords(userInput: string, chatHistory: string[]) {
         description: "Whether a resource was found or more info is needed."
       },
       follow_up_question: {
-        type: "STRING",
-        description: "The specific question to ask the user if status is NEEDS_CLARIFICATION",
+        type: "INTEGER",
+        description: "The ID of the specific question to ask the user if status is NEEDS_CLARIFICATION",
         nullable: true,
       },
       match: {
@@ -75,7 +75,7 @@ export async function matchKeywords(userInput: string, chatHistory: string[]) {
     2. If you think you need more details, set status to 'NEEDS_CLARIFICATION' and select the most appropriate ID (0–140) from the following options for follow-up questions:
     ${JSON.stringify(followups)}
     
-    Don't be afraid to ask multiple follow up questions. Never ask a duplicate follow-up question.
+    Don't be afraid to ask multiple follow up questions. Ideally, you want to ask at least three questions! Never ask a duplicate follow-up question.
     
     Here is the database of resources you can choose from:
     ${JSON.stringify(entireSpreadsheet)}

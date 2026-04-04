@@ -8,6 +8,7 @@ import {Dispatch, SetStateAction, useEffect, useRef, useState} from "react";
 import {ChatMessage, Sender} from "@/data/chat-message";
 import MessageBubble from "@/components/message-bubble";
 import {matchKeywords} from "@/app/ai/backend";
+import followups from "./followups.json";
 // Indicator Typing
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import {TypingIndicator} from "@chatscope/chat-ui-kit-react";
@@ -26,8 +27,8 @@ export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
   const scrollViewRef = useRef<HTMLDivElement>(null);
   // A list containing all the messages in the chat, as ChatMessage objects to be rendered
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  // A list containing all the user's messages as strings, used for chat history
-  const [userMessages, setUserMessages] = useState<string[]>([]);
+  // A list containing all the chat's messages (both user and server) as *strings*, used for chat history
+  const [historyMessages, setHistoryMessages] = useState<string[]>([]);
   //typing indicator state
   const [isTyping, setIsTyping] = useState(false);
   // isSessionActive is true if a current chat is ongoing, false if a match is found
@@ -49,7 +50,7 @@ export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
 
   const terminateSession = () => {
     setMessages([]);
-    setUserMessages([]);
+    setHistoryMessages([]);
     setIsSessionActive(true); // Reset the lock if you clear the chat
     setIsTyping(false); // Reset typing indicator state when starting a new session
   };
@@ -87,17 +88,22 @@ export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
             // "Submit" the message
             const userText = inputRef.value;
             setMessages(prevState => [...prevState, {message: userText, sender: Sender.user}]);
-            setUserMessages(prevMes => [...prevMes, userText])
+            setHistoryMessages(prevMes => [...prevMes, userText])
             inputRef.value = ""; // Clear input immediately
 
             // Start typing
             setIsTyping(true);
 
             try {
-              const response = await matchKeywords(userText, userMessages);
+              const response = await matchKeywords(userText, historyMessages);
 
               if (response.match == null) {
+                // If there's no match, there's a follow-up question
+                const followUpId: number = response.follow_up_question
+                console.log(followups[followUpId])
+
                 setMessages(prev => [...prev, {message: response.follow_up_question, sender: Sender.server}]);
+                setHistoryMessages(prevMes => [...prevMes, response.follow_up_question])
               } else {
                 setMessages(prev => [...prev, {
                   message: `Resource found: ${response.match.resource_name}`,
