@@ -20,7 +20,7 @@ const styles = {
     },
     imageContainer: {
         width: "100%",
-        aspectRatio: "3 / 1",
+        aspectRatio: "2 / 1",
         overflow: "hidden",
         position: "relative",
     },
@@ -29,22 +29,22 @@ const styles = {
     },
     contentSection: {
         backgroundColor: "#00205B", 
-        padding: "60px 40px",
+        padding: "20px 25px",
         color: "white",
         flexGrow: 1,
         display: "flex",
+        gap: "10px",
         flexDirection: "column",
         justifyContent: "center",
     },
     matchText: {
-        fontSize: "34px",
-        marginBottom: "34px",
+        fontSize: "20px",
+        // marginBottom: "34px",
         opacity: 0.9,
     },
     title: {
-        fontSize: "3.5rem", 
+        fontSize: "2rem", 
         fontWeight: "bold",
-        marginBottom: "24px",
         lineHeight: "1.1",
     },
     description: {
@@ -67,6 +67,7 @@ export default function BigPopupMobile({
    title,
    description
 }: BigPopupMobileProps) {
+    console.log(imageSrc);
    return (
        <div style={styles.card}>
            {imageSrc && (

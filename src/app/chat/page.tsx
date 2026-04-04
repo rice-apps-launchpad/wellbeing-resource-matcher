@@ -70,6 +70,8 @@ export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
           if (chatMessage.message != null) {
             return <MessageBubble message={chatMessage} key={index} />;
           } else if (chatMessage.match != null) {
+            console.log("Hello")
+            console.log(chatMessage.match)
             return <BigPopupMobile
             key={index}
             title={chatMessage.match.title}
@@ -122,10 +124,11 @@ export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
                 },
                   {
                     match: {
-                      imageSrc: "",
+                      imageSrc: "/rpc.jpg", // temporary image
                       matchText: response.match.resource_location,
                       title: response.match.resource_name,
-                      description: response.match.descripition,
+                      // description: response.match.descripition,
+                      description: "This is a test description. It can be very long sometimes so let's make sure it looks good!",
                     },
                     sender: Sender.server,
                   },]);
