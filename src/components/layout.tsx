@@ -34,6 +34,8 @@ type DesktopLayoutProps = {
 
 
 export default function DesktopLayout({ leftContent, chatContent }: DesktopLayoutProps) {
+    
+    
     return (
         <div style={styles.container}>
             <div style={styles.left}>{leftContent}</div>

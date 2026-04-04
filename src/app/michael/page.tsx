@@ -21,19 +21,25 @@ export default function Page() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  let chat = (
+  <ChatPage isLaptop={isLaptop} setIsLaptop={setLaptop}/>
+  );
 
-  if (!isLaptop) {
-    return (
-      <main className="w-full h-screen">
-        <ChatPage isLaptop={isLaptop} setIsLaptop={setLaptop}/>
-      </main>
-    );
-  }
+  
+
+  // if (!isLaptop) {
+  //   return (
+  //     <main className="w-full h-screen">
+  //       {chat}
+  //     </main>
+  //   );
+  // }
 
   return (
     <DesktopLayout
       leftContent={<div><MatchLayout/></div>}
-      chatContent={<div><ChatPage isLaptop={isLaptop} setIsLaptop={setLaptop}/></div>}
+      chatContent={<div>{chat}</div>}  
+      is
     />
   );
 }
