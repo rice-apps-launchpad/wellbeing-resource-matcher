@@ -10,6 +10,7 @@ const styles = {
     textAlign: "center",
     fontFamily: "Noto Serif",
     maxWidth: "900px",
+    margin: "0 auto",
     fontSize: "45px",
   },
   layoutWrapper: {
@@ -22,13 +23,13 @@ const styles = {
     display: "grid",
     textAlign: "start",
     gridTemplateColumns: "repeat(auto-fit, 380px)",
-    justifyContent: "start",
+    justifyContent: "center",
     gap: "48px",
     width: "100%",
   },
 } as const;
 
-export default function Page() {
+export default function All_resources() {
   const [resources, setResources] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 

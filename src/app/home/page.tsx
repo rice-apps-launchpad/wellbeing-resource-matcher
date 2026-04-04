@@ -2,6 +2,7 @@
 import DesktopLayout from "@/components/layout";
 import MatchLayout from "@/app/devi/page"
 import ChatPage from "@/app/chat/page"
+import AllResources from "@/app/all_resources/all_resources"
 import {useState, useEffect} from "react";
 import {Match} from "@/data/chat-message"
 
@@ -15,7 +16,7 @@ export default function Page() {
    * to `interface Match`.
    *
    * Otherwise, it will be undefined.
-    */
+   */
   const [match, setMatch] = useState<Match>();
 
   useEffect(() => {
@@ -41,8 +42,10 @@ export default function Page() {
 
   return (
     <DesktopLayout
-      leftContent={<div><MatchLayout/></div>}
-      chatContent={<div><ChatPage isLaptop={isLaptop} setIsLaptop={setLaptop}/></div>}
+      leftContent={match
+        ? <div><MatchLayout {...match}/></div>
+        : <div><AllResources/></div>}
+      chatContent={<div><ChatPage isLaptop={isLaptop} setIsLaptop={setLaptop} setMatch={setMatch}/></div>}
     />
   );
 }

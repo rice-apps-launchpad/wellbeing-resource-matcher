@@ -10,7 +10,19 @@ const ai = new GoogleGenAI({
 });
 
 
-export async function matchKeywords(userInput: string, chatHistory: string[]) {
+export type MatchResult = {
+  status: "MATCH_FOUND" | "NEEDS_CLARIFICATION";
+  follow_up_question?: string;
+  match?: {
+    resource_name: string;
+    resource_location: string;
+    contact_info: string;
+    schedule_link: string;
+    category: string;
+  };
+};
+
+export async function matchKeywords(userInput: string, chatHistory: string[]): Promise<MatchResult> {
   'use server'
 
   // const jsonSchema = z.toJSONSchema(resourceSchema);
@@ -32,11 +44,9 @@ export async function matchKeywords(userInput: string, chatHistory: string[]) {
       follow_up_question: {
         type: "STRING",
         description: "The specific question to ask the user if status is NEEDS_CLARIFICATION",
-        nullable: true,
       },
       match: {
         type: "OBJECT",
-        nullable: true,
         properties: {
           resource_name: {type: "STRING"},
           resource_location: {type: "STRING"},
@@ -86,7 +96,7 @@ export async function matchKeywords(userInput: string, chatHistory: string[]) {
     },
   });
   if (!response.text) {
-    return "No response from AI";
+    throw new Error("AI did not respond :(");
   }
 
   try {
@@ -95,6 +105,6 @@ export async function matchKeywords(userInput: string, chatHistory: string[]) {
     return responseJson;
   } catch (e) {
     console.error("Failed to parse JSON:", e);
-    return null;
+    throw e;
   }
 }

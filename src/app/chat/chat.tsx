@@ -16,12 +16,12 @@ import {TypingIndicator} from "@chatscope/chat-ui-kit-react";
 interface ChatPageProps {
   isLaptop: boolean,
   setIsLaptop: Dispatch<SetStateAction<boolean>>,
-  setMatch: Dispatch<SetStateAction<Match>>,
+  setMatch: Dispatch<SetStateAction<Match | undefined>>,
 }
 
 // TODO: isLaptop and setIsLaptop are currently unused, but will be used to
 //  conditionally show the big popup inline in the chat if we're on the mobile view.
-export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
+export default function ChatPage({isLaptop, setIsLaptop, setMatch}: ChatPageProps) {
   // A ref to the chat input field so that we can reference the value when we submit a message
   const chatInputRef = useRef<HTMLInputElement>(null);
   // A ref to the scroll view so that we can auto scroll to the bottom
@@ -97,14 +97,24 @@ export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
 
             try {
               const response = await matchKeywords(userText, userMessages);
+              const match = response.match;
 
-              if (response.match == null) {
+              // If there is no match, there is a follow-up question
+              if (!match) {
                 setMessages(prev => [...prev, {message: response.follow_up_question, sender: Sender.server}]);
               } else {
                 setMessages(prev => [...prev, {
-                  message: `Resource found: ${response.match.resource_name}`,
+                  message: `Resource found: ${match.resource_name}`,
                   sender: Sender.server
                 }]);
+                setMatch({
+                  // TODO: Should look up image and description from Google sheet
+                  //  blocked by https://www.notion.so/riceapps/Launchpad-Wellbeing-2a92c630bc0a80948c0af3a12e73dde5?p=31c2c630bc0a80ba9d9fd2cc85ba23ff&pm=s
+                  imageSrc: "/ccd.jpg", // DEBUG
+                  title: match.resource_name,
+                  // TODO
+                  description: "This is a test description. We are going to make it very long because it should look good no matter the length of the description.", // DEBUG
+                });
 
                 setIsSessionActive(false);
               }
