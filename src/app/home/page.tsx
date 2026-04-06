@@ -1,5 +1,4 @@
 'use client';
-import DesktopLayout from "@/components/layout";
 import MatchLayout from "@/app/match_screen/match_screen"
 import ChatPage from "@/app/chat/chat"
 import AllResources from "@/app/all_resources/all_resources"
@@ -7,8 +6,6 @@ import {useState, useEffect} from "react";
 import {Match} from "@/data/chat-message"
 
 export default function Page() {
-  // new for laptop-mobile screen changing
-  // set to false initially -> if screen detects a laptop view-> switch
   const [isLaptop, setLaptop] = useState(false)
 
   /**
@@ -31,21 +28,24 @@ export default function Page() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-
-  if (!isLaptop) {
-    return (
-      <main className="w-full h-screen">
-        <ChatPage isLaptop={isLaptop} setMatch={setMatch}/>
-      </main>
-    );
-  }
-
   return (
-    <DesktopLayout
-      leftContent={match
-        ? <div><MatchLayout {...match}/></div>
-        : <div><AllResources/></div>}
-      chatContent={<div><ChatPage isLaptop={isLaptop} setMatch={setMatch}/></div>}
-    />
+    <div style={{height: "100vh", width: "100vw", display: "flex", overflow: "hidden"}}>
+      {/* Left panel: only visible on desktop */}
+      {isLaptop && (
+        <div style={{flex: "1 1 auto", minWidth: 0, overflow: "auto"}}>
+          {match
+            ? <div><MatchLayout {...match}/></div>
+            : <div><AllResources/></div>}
+        </div>
+      )}
+
+      {/* Chat panel: always rendered, never unmounted */}
+      <div style={isLaptop
+        ? {width: "400px", minWidth: "400px", maxWidth: "400px", flex: "0 0 400px", display: "flex", flexDirection: "column", overflow: "hidden"}
+        : {width: "100%", height: "100%", display: "flex", flexDirection: "column", overflow: "hidden"}
+      }>
+        <ChatPage isLaptop={isLaptop} setMatch={setMatch}/>
+      </div>
+    </div>
   );
 }
