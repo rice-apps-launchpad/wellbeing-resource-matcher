@@ -9,14 +9,17 @@ import {ChatMessage, Sender} from "@/data/chat-message";
 import MessageBubble from "@/components/message-bubble";
 import {matchKeywords} from "@/app/ai/backend";
 import {Match} from "@/data/chat-message"
+import followups from "@/app/ai/followups.json";
 // Indicator Typing
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import {TypingIndicator} from "@chatscope/chat-ui-kit-react";
+import BigPopup from "@/components/big-popup/big-popup";
+import BigPopupMobile from "@/components/big-popup/big-popup-mobile";
 
 interface ChatPageProps {
-  isLaptop: boolean,
-  setIsLaptop: Dispatch<SetStateAction<boolean>>,
-  setMatch: Dispatch<SetStateAction<Match | undefined>>,
+  isLaptop: boolean;
+  setIsLaptop: Dispatch<SetStateAction<boolean>>;
+  setMatch: Dispatch<SetStateAction<Match | undefined>>;
 }
 
 // TODO: isLaptop and setIsLaptop are currently unused, but will be used to
@@ -28,8 +31,8 @@ export default function ChatPage({isLaptop, setIsLaptop, setMatch}: ChatPageProp
   const scrollViewRef = useRef<HTMLDivElement>(null);
   // A list containing all the messages in the chat, as ChatMessage objects to be rendered
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  // A list containing all the user's messages as strings, used for chat history
-  const [userMessages, setUserMessages] = useState<string[]>([]);
+  // A list containing all the chat's messages (both user and server) as *strings*, used for chat history
+  const [historyMessages, setHistoryMessages] = useState<string[]>([]);
   //typing indicator state
   const [isTyping, setIsTyping] = useState(false);
   // isSessionActive is true if a current chat is ongoing, false if a match is found
@@ -41,17 +44,19 @@ export default function ChatPage({isLaptop, setIsLaptop, setMatch}: ChatPageProp
     // https://stackoverflow.com/a/21067431
     const scrollView = scrollViewRef.current;
     if (!scrollView) return;
-    console.log(scrollView.scrollHeight)
-    console.log(scrollView.clientHeight)
-    console.log(scrollView.scrollTop + 1)
-    const isScrolledToBottom = scrollView.scrollHeight - scrollView.clientHeight <= scrollView.scrollTop + 1;
+    console.log(scrollView.scrollHeight);
+    console.log(scrollView.clientHeight);
+    console.log(scrollView.scrollTop + 1);
+    const isScrolledToBottom =
+      scrollView.scrollHeight - scrollView.clientHeight <=
+      scrollView.scrollTop + 1;
     if (isScrolledToBottom)
       scrollView.scrollTop = scrollView.scrollHeight - scrollView.clientHeight;
   }, [messages]);
 
   const terminateSession = () => {
     setMessages([]);
-    setUserMessages([]);
+    setHistoryMessages([]);
     setIsSessionActive(true); // Reset the lock if you clear the chat
     setIsTyping(false); // Reset typing indicator state when starting a new session
   };
@@ -59,9 +64,26 @@ export default function ChatPage({isLaptop, setIsLaptop, setMatch}: ChatPageProp
   return (
     <div className={"h-screen flex flex-col justify-end bg-[#E8E8E8] pb-5 pl-5"}>
       {/* This div holds all the messages */}
-      <div ref={scrollViewRef} className={"flex flex-col items-end gap-3 overflow-scroll pr-5"}>
-        {messages.map((message, index) => {
-          return (<MessageBubble message={message} key={index}/>)
+      <div
+        ref={scrollViewRef}
+        className={"flex flex-col items-end gap-3 overflow-scroll pr-5"}
+      >
+        {/* check if messages.map is a message or match*/}
+        {messages.map((chatMessage, index) => {
+          if (chatMessage.message != null) {
+            return <MessageBubble message={chatMessage} key={index}/>;
+          } else if (chatMessage.match != null) {
+            console.log("Hello")
+            console.log(chatMessage.match)
+            // We will only render the BigPopup inline in the chat if we are on mobile!
+            console.log("isLaptop" + isLaptop)
+            return !isLaptop ? <BigPopupMobile
+              key={index}
+              title={chatMessage.match.title}
+              description={chatMessage.match.description}
+              imageSrc={chatMessage.match?.imageSrc}
+            /> : null;
+          }
         })}
         {/* Typing indicator */}
         {isTyping && (
@@ -89,24 +111,42 @@ export default function ChatPage({isLaptop, setIsLaptop, setMatch}: ChatPageProp
             // "Submit" the message
             const userText = inputRef.value;
             setMessages(prevState => [...prevState, {message: userText, sender: Sender.user}]);
-            setUserMessages(prevMes => [...prevMes, userText])
+            setHistoryMessages(prevMes => [...prevMes, "User: " + userText])
             inputRef.value = ""; // Clear input immediately
 
             // Start typing
             setIsTyping(true);
 
             try {
-              const response = await matchKeywords(userText, userMessages);
+              const response = await matchKeywords(userText, historyMessages);
               const match = response.match;
 
               // If there is no match, there is a follow-up question
               if (!match) {
-                setMessages(prev => [...prev, {message: response.follow_up_question, sender: Sender.server}]);
+                // If there's no match, there's a follow-up question
+                const followUpId: keyof typeof followups = response.follow_up_question
+
+                setMessages(prev => [...prev, {message: followups[followUpId], sender: Sender.server}]);
+                setHistoryMessages(prevMes => [...prevMes, "AI: " + followups[followUpId]])
+                console.log(setHistoryMessages)
               } else {
                 setMessages(prev => [...prev, {
                   message: `Resource found: ${match.resource_name}`,
                   sender: Sender.server
-                }]);
+                },
+                  {
+                    match: {
+                      // TODO: Should look up image and description from Google sheet
+                      //  blocked by https://www.notion.so/riceapps/Launchpad-Wellbeing-2a92c630bc0a80948c0af3a12e73dde5?p=31c2c630bc0a80ba9d9fd2cc85ba23ff&pm=s
+                      imageSrc: "/rpc.jpg", // temporary image
+                      matchText: match.resource_location,
+                      title: match.resource_name,
+                      // description: response.match.descripition,
+                      description: "This is a test description. It can be very long sometimes so let's make sure it looks good!",
+                    },
+                    sender: Sender.server,
+                  },]);
+
                 setMatch({
                   // TODO: Should look up image and description from Google sheet
                   //  blocked by https://www.notion.so/riceapps/Launchpad-Wellbeing-2a92c630bc0a80948c0af3a12e73dde5?p=31c2c630bc0a80ba9d9fd2cc85ba23ff&pm=s
@@ -115,7 +155,6 @@ export default function ChatPage({isLaptop, setIsLaptop, setMatch}: ChatPageProp
                   // TODO
                   description: "This is a test description. We are going to make it very long because it should look good no matter the length of the description.", // DEBUG
                 });
-
                 setIsSessionActive(false);
               }
             } finally {
@@ -135,5 +174,10 @@ export default function ChatPage({isLaptop, setIsLaptop, setMatch}: ChatPageProp
         </button>
       )}
     </div>
-  )
+  );
 }
+
+
+
+
+

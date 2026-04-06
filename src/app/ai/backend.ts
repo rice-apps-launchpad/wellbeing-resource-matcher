@@ -2,7 +2,7 @@
 
 import {GoogleGenAI} from "@google/genai";
 import {callSheets} from "@/app/sheets/backend";
-import followups from "./followups.json";
+import followups from "@/app/ai/followups.json";
 
 // The client gets the API key from the environment variable `GEMINI_API_KEY`.
 const ai = new GoogleGenAI({
@@ -42,17 +42,20 @@ export async function matchKeywords(userInput: string, chatHistory: string[]): P
         description: "Whether a resource was found or more info is needed."
       },
       follow_up_question: {
-        type: "STRING",
-        description: "The specific question to ask the user if status is NEEDS_CLARIFICATION",
+        type: "INTEGER",
+        description: "The ID of the specific question to ask the user if status is NEEDS_CLARIFICATION",
+        nullable: true,
       },
       match: {
         type: "OBJECT",
         properties: {
-          resource_name: {type: "STRING"},
-          resource_location: {type: "STRING"},
-          contact_info: {type: "STRING"},
-          schedule_link: {type: "STRING"},
-          category: {type: "STRING"}
+          resource_name: { type: "STRING" },
+          resource_location: { type: "STRING" },
+          contact_info: { type: "STRING" },
+          schedule_link: { type: "STRING" },
+          category: { type: "STRING" },
+          // temporary
+          description: { type: "STRING" }
         }
       }
     },
@@ -85,7 +88,7 @@ export async function matchKeywords(userInput: string, chatHistory: string[]): P
     2. If you think you need more details, set status to 'NEEDS_CLARIFICATION' and select the most appropriate ID (0–140) from the following options for follow-up questions:
     ${JSON.stringify(followups)}
     
-    Don't be afraid to ask multiple follow up questions. Never ask a duplicate follow-up question.
+    Don't be afraid to ask multiple follow up questions. Ideally, you want to ask at least three questions! Never ask a duplicate follow-up question.
     
     Here is the database of resources you can choose from:
     ${JSON.stringify(entireSpreadsheet)}
@@ -95,6 +98,9 @@ export async function matchKeywords(userInput: string, chatHistory: string[]): P
       responseJsonSchema: resourceSchema,
     },
   });
+
+
+
   if (!response.text) {
     throw new Error("AI did not respond :(");
   }
