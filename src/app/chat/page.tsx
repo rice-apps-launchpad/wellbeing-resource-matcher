@@ -4,8 +4,8 @@ This will be the "chat" page for both desktop and mobile! It can take infinitely
 automatically.
  */
 
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import { ChatMessage, Sender } from "@/data/chat-message";
+import {Dispatch, SetStateAction, useEffect, useRef, useState} from "react";
+import {ChatMessage, Sender} from "@/data/chat-message";
 import MessageBubble from "@/components/message-bubble";
 import {matchKeywords} from "@/app/ai/backend";
 // Indicator Typing
@@ -68,16 +68,18 @@ export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
         {/* check if messages.map is a message or match*/}
         {messages.map((chatMessage, index) => {
           if (chatMessage.message != null) {
-            return <MessageBubble message={chatMessage} key={index} />;
+            return <MessageBubble message={chatMessage} key={index}/>;
           } else if (chatMessage.match != null) {
             console.log("Hello")
             console.log(chatMessage.match)
-            return <BigPopupMobile
-            key={index}
-            title={chatMessage.match.title}
-            description={chatMessage.match.description}
-            imageSrc={chatMessage.match?.imageSrc}
-            />;
+            // We will only render the BigPopup inline in the chat if we are on mobile!
+            console.log("isLaptop" + isLaptop)
+            return !isLaptop ? <BigPopupMobile
+              key={index}
+              title={chatMessage.match.title}
+              description={chatMessage.match.description}
+              imageSrc={chatMessage.match?.imageSrc}
+            /> : null;
           }
         })}
         {/* Typing indicator */}
