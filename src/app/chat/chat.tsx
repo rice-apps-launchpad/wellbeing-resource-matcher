@@ -56,10 +56,11 @@ export default function ChatPage({isLaptop, setMatch}: ChatPageProps) {
     setHistoryMessages([]);
     setIsSessionActive(true); // Reset the lock if you clear the chat
     setIsTyping(false); // Reset typing indicator state when starting a new session
+    setMatch(undefined); // Clear match so desktop shows AllResources again
   };
 
   return (
-    <div className={"h-screen flex flex-col justify-end bg-[#E8E8E8] pb-5 pl-5"}>
+    <div className={"h-screen flex flex-col justify-end bg-[#E8E8E8] pt-5 pb-5 pl-5"}>
       {/* This div holds all the messages */}
       <div
         ref={scrollViewRef}

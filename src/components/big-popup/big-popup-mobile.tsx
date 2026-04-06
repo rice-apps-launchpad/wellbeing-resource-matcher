@@ -48,8 +48,8 @@ const styles = {
         lineHeight: "1.1",
     },
     description: {
-        fontSize: "1.3rem", 
-        lineHeight: "1.7",
+        fontSize: "1rem",
+        lineHeight: "1.3",
         opacity: 0.9,
     }
 } as const;

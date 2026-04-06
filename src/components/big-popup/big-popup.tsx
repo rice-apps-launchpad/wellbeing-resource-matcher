@@ -9,7 +9,6 @@ const notoSerif = Noto_Serif({ subsets: ['latin'] });
 const styles = {
     card: {
         width: "100%",
-        maxWidth: "64rem",
         margin: "0 auto",
         overflow: "hidden",
         borderRadius: "20px", 
@@ -28,8 +27,8 @@ const styles = {
         objectFit: "cover",
     },
     contentSection: {
-        backgroundColor: "#00205B", 
-        padding: "60px 40px",
+        backgroundColor: "#00205B",
+        padding: "30px 40px",
         color: "white",
         flexGrow: 1,
         display: "flex",
@@ -37,19 +36,19 @@ const styles = {
         justifyContent: "center",
     },
     matchText: {
-        fontSize: "34px",
-        marginBottom: "34px",
+        fontSize: "18px",
+        marginBottom: "12px",
         opacity: 0.9,
     },
     title: {
-        fontSize: "3.5rem", 
+        fontSize: "2rem",
         fontWeight: "bold",
-        marginBottom: "24px",
+        marginBottom: "12px",
         lineHeight: "1.1",
     },
     description: {
-        fontSize: "1.3rem", 
-        lineHeight: "1.7",
+        fontSize: "1rem",
+        lineHeight: "1.6",
         opacity: 0.9,
     }
 } as const;
