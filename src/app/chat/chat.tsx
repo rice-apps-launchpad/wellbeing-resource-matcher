@@ -123,8 +123,16 @@ export default function ChatPage({isLaptop, setIsLaptop, setMatch}: ChatPageProp
 
               // If there is no match, there is a follow-up question
               if (!match) {
-                // If there's no match, there's a follow-up question
-                const followUpId: keyof typeof followups = response.follow_up_question
+                // If there's no match, there should be a follow-up question
+                if (!response.follow_up_question) {
+                  throw new Error("No match nor follow-up question");
+                }
+                // Convert make sure AI provided ID exists in our followups JSON
+                const rawId = String(response.follow_up_question);
+                if (!(rawId in followups)) {
+                  throw new Error(`Invalid follow-up ID received: ${rawId}`);
+                }
+                const followUpId = rawId as keyof typeof followups;
 
                 setMessages(prev => [...prev, {message: followups[followUpId], sender: Sender.server}]);
                 setHistoryMessages(prevMes => [...prevMes, "AI: " + followups[followUpId]])

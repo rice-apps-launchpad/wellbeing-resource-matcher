@@ -12,7 +12,7 @@ const ai = new GoogleGenAI({
 
 export type MatchResult = {
   status: "MATCH_FOUND" | "NEEDS_CLARIFICATION";
-  follow_up_question?: string;
+  follow_up_question?: number;
   match?: {
     resource_name: string;
     resource_location: string;
