@@ -1,6 +1,6 @@
 'use client';
 import DesktopLayout from "@/components/layout";
-import MatchLayout from "@/app/devi/page"
+import MatchLayout from "@/app/match_screen/match_screen"
 import ChatPage from "@/app/chat/chat"
 import AllResources from "@/app/all_resources/all_resources"
 import {useState, useEffect} from "react";

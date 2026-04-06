@@ -1,7 +1,7 @@
 'use server';
 
 import {GoogleGenAI} from "@google/genai";
-import {callSheets} from "@/app/sheets/backend";
+import {callSheetsWithRows} from "@/app/sheets/backend";
 import followups from "@/app/ai/followups.json";
 
 // The client gets the API key from the environment variable `GEMINI_API_KEY`.
@@ -14,11 +14,7 @@ export type MatchResult = {
   status: "MATCH_FOUND" | "NEEDS_CLARIFICATION";
   follow_up_question?: number;
   match?: {
-    resource_name: string;
-    resource_location: string;
-    contact_info: string;
-    schedule_link: string;
-    category: string;
+    resource_row: number;
   };
 };
 
@@ -27,11 +23,9 @@ export async function matchKeywords(userInput: string, chatHistory: string[]): P
 
   // const jsonSchema = z.toJSONSchema(resourceSchema);
   // Download resource spreadsheet
-  const entireSpreadsheet = await callSheets();
+  const entireSpreadsheet = await callSheetsWithRows();
 
   console.log("chat history:" + chatHistory);
-
-
 
   const resourceSchema = {
     type: "OBJECT",
@@ -77,14 +71,14 @@ export async function matchKeywords(userInput: string, chatHistory: string[]): P
     User Input: ${userInput}
 
     Instructions:
-    You should try to match the user's needs to the best resource available at Rice University. 
-    1. If there is a clear match, choose the best resource and set status to 'MATCH_FOUND'.
+    You should try to match the user's needs to the best resource available at Rice University.
+    1. If there is a clear match, choose the best resource and set status to 'MATCH_FOUND'. Set match.resource_row to the row number of the matched resource from the database below.
     2. If you think you need more details, set status to 'NEEDS_CLARIFICATION' and select the most appropriate ID (0–140) from the following options for follow-up questions:
     ${JSON.stringify(followups)}
-    
+
     Don't be afraid to ask multiple follow up questions. Ideally, you want to ask at least three questions! Never ask a duplicate follow-up question.
-    
-    Here is the database of resources you can choose from:
+
+    Here is the database of resources you can choose from. Each resource has a "row" field — use that as the resource_row value when you find a match:
     ${JSON.stringify(entireSpreadsheet)}
     `,
     config: {
