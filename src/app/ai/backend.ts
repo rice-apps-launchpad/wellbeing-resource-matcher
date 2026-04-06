@@ -16,6 +16,9 @@ export type MatchResult = {
   match?: {
     resource_row: number;
   };
+  other_matches?: {
+    resource_row: number;
+  }[];
 };
 
 export async function matchKeywords(userInput: string, chatHistory: string[]): Promise<MatchResult> {
@@ -45,6 +48,16 @@ export async function matchKeywords(userInput: string, chatHistory: string[]): P
         properties: {
           resource_row: { type: "INTEGER" },
         }
+      },
+      other_matches: {
+        type: "ARRAY",
+        nullable: true,
+        items: {
+          type: "OBJECT",
+          properties: {
+            resource_row: { type: "INTEGER" },
+          }
+        }
       }
     },
     required: ["status"],
@@ -72,7 +85,7 @@ export async function matchKeywords(userInput: string, chatHistory: string[]): P
 
     Instructions:
     You should try to match the user's needs to the best resource available at Rice University.
-    1. If there is a clear match, choose the best resource and set status to 'MATCH_FOUND'. Set match.resource_row to the row number of the matched resource from the database below.
+    1. If there is a clear match, choose the best resource and set status to 'MATCH_FOUND'. Set match.resource_row to the row number of the matched resource from the database below. Additionally, if there are 1–3 other resources that may also be relevant to the user's needs, include them in other_matches (each with their resource_row). Do not repeat the primary match in other_matches.
     2. If you think you need more details, set status to 'NEEDS_CLARIFICATION' and select the most appropriate ID (0–140) from the following options for follow-up questions:
     ${JSON.stringify(followups)}
 
