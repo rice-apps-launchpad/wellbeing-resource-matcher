@@ -21,8 +21,6 @@ interface ChatPageProps {
   setMatch: Dispatch<SetStateAction<Match | undefined>>;
 }
 
-// TODO: isLaptop and setIsLaptop are currently unused, but will be used to
-//  conditionally show the big popup inline in the chat if we're on the mobile view.
 export default function ChatPage({isLaptop, setMatch}: ChatPageProps) {
   // A ref to the chat input field so that we can reference the value when we submit a message
   const chatInputRef = useRef<HTMLInputElement>(null);
