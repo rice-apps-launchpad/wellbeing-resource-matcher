@@ -13,18 +13,16 @@ import followups from "@/app/ai/followups.json";
 // Indicator Typing
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import {TypingIndicator} from "@chatscope/chat-ui-kit-react";
-import BigPopup from "@/components/big-popup/big-popup";
 import BigPopupMobile from "@/components/big-popup/big-popup-mobile";
 
 interface ChatPageProps {
   isLaptop: boolean;
-  setIsLaptop: Dispatch<SetStateAction<boolean>>;
   setMatch: Dispatch<SetStateAction<Match | undefined>>;
 }
 
 // TODO: isLaptop and setIsLaptop are currently unused, but will be used to
 //  conditionally show the big popup inline in the chat if we're on the mobile view.
-export default function ChatPage({isLaptop, setIsLaptop, setMatch}: ChatPageProps) {
+export default function ChatPage({isLaptop, setMatch}: ChatPageProps) {
   // A ref to the chat input field so that we can reference the value when we submit a message
   const chatInputRef = useRef<HTMLInputElement>(null);
   // A ref to the scroll view so that we can auto scroll to the bottom
