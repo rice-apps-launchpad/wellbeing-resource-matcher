@@ -11,5 +11,13 @@ Represents a single chat message
  */
 export interface ChatMessage {
   sender: Sender;
-  message: string;
+  message?: string;
+  match?: Match;
+}
+
+export interface Match {
+  imageSrc: string;
+  matchText?: string;
+  title: string;
+  description: string;
 }
