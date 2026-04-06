@@ -15,7 +15,7 @@ export interface ChatMessage {
   match?: Match;
 }
 
-interface Match {
+export interface Match {
   imageSrc: string;
   matchText?: string;
   title: string;

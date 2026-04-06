@@ -8,21 +8,21 @@ import {Dispatch, SetStateAction, useEffect, useRef, useState} from "react";
 import {ChatMessage, Sender} from "@/data/chat-message";
 import MessageBubble from "@/components/message-bubble";
 import {matchKeywords} from "@/app/ai/backend";
+import {Match} from "@/data/chat-message"
 import followups from "@/app/ai/followups.json";
 // Indicator Typing
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import {TypingIndicator} from "@chatscope/chat-ui-kit-react";
-import BigPopup from "@/components/big-popup/big-popup";
 import BigPopupMobile from "@/components/big-popup/big-popup-mobile";
 
 interface ChatPageProps {
   isLaptop: boolean;
-  setIsLaptop: Dispatch<SetStateAction<boolean>>;
+  setMatch: Dispatch<SetStateAction<Match | undefined>>;
 }
 
 // TODO: isLaptop and setIsLaptop are currently unused, but will be used to
 //  conditionally show the big popup inline in the chat if we're on the mobile view.
-export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
+export default function ChatPage({isLaptop, setMatch}: ChatPageProps) {
   // A ref to the chat input field so that we can reference the value when we submit a message
   const chatInputRef = useRef<HTMLInputElement>(null);
   // A ref to the scroll view so that we can auto scroll to the bottom
@@ -117,29 +117,50 @@ export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
 
             try {
               const response = await matchKeywords(userText, historyMessages);
+              const match = response.match;
 
-              if (response.match == null) {
-                // If there's no match, there's a follow-up question
-                const followUpId: keyof typeof followups = response.follow_up_question
+              // If there is no match, there is a follow-up question
+              if (!match) {
+                // If there's no match, there should be a follow-up question
+                if (!response.follow_up_question) {
+                  throw new Error("No match nor follow-up question");
+                }
+                // Convert make sure AI provided ID exists in our followups JSON
+                const rawId = String(response.follow_up_question);
+                if (!(rawId in followups)) {
+                  throw new Error(`Invalid follow-up ID received: ${rawId}`);
+                }
+                const followUpId = rawId as keyof typeof followups;
 
                 setMessages(prev => [...prev, {message: followups[followUpId], sender: Sender.server}]);
                 setHistoryMessages(prevMes => [...prevMes, "AI: " + followups[followUpId]])
                 console.log(setHistoryMessages)
               } else {
                 setMessages(prev => [...prev, {
-                  message: `Resource found: ${response.match.resource_name}`,
+                  message: `Resource found: ${match.resource_name}`,
                   sender: Sender.server
                 },
                   {
                     match: {
+                      // TODO: Should look up image and description from Google sheet
+                      //  blocked by https://www.notion.so/riceapps/Launchpad-Wellbeing-2a92c630bc0a80948c0af3a12e73dde5?p=31c2c630bc0a80ba9d9fd2cc85ba23ff&pm=s
                       imageSrc: "/rpc.jpg", // temporary image
-                      matchText: response.match.resource_location,
-                      title: response.match.resource_name,
+                      matchText: match.resource_location,
+                      title: match.resource_name,
                       // description: response.match.descripition,
                       description: "This is a test description. It can be very long sometimes so let's make sure it looks good!",
                     },
                     sender: Sender.server,
                   },]);
+
+                setMatch({
+                  // TODO: Should look up image and description from Google sheet
+                  //  blocked by https://www.notion.so/riceapps/Launchpad-Wellbeing-2a92c630bc0a80948c0af3a12e73dde5?p=31c2c630bc0a80ba9d9fd2cc85ba23ff&pm=s
+                  imageSrc: "/ccd.jpg", // DEBUG
+                  title: match.resource_name,
+                  // TODO
+                  description: "This is a test description. We are going to make it very long because it should look good no matter the length of the description.", // DEBUG
+                });
                 setIsSessionActive(false);
               }
             } finally {
