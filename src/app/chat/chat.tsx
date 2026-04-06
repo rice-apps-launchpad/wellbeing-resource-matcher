@@ -8,6 +8,7 @@ import {Dispatch, SetStateAction, useEffect, useRef, useState} from "react";
 import {ChatMessage, Sender} from "@/data/chat-message";
 import MessageBubble from "@/components/message-bubble";
 import {matchKeywords} from "@/app/ai/backend";
+import {getResourceByRow} from "@/app/sheets/backend";
 import {Match} from "@/data/chat-message"
 import followups from "@/app/ai/followups.json";
 // Indicator Typing
@@ -134,31 +135,29 @@ export default function ChatPage({isLaptop, setMatch}: ChatPageProps) {
                 setHistoryMessages(prevMes => [...prevMes, "AI: " + followups[followUpId]])
                 console.log(setHistoryMessages)
               } else {
+                // Look up the full resource data from the Google Sheet by row number
+                const resource = await getResourceByRow(match.resource_row);
+                if (!resource) {
+                  throw new Error(`Could not find resource at row ${match.resource_row}`);
+                }
+
+                const matchData: Match = {
+                  imageSrc: "/" + resource.image || "/rpc.jpg", // Fallback image
+                  matchText: resource.location,
+                  title: resource.resourceName,
+                  description: resource.description,
+                };
+
                 setMessages(prev => [...prev, {
-                  message: `Resource found: ${match.resource_name}`,
+                  message: `Resource found: ${resource.resourceName}`,
                   sender: Sender.server
                 },
                   {
-                    match: {
-                      // TODO: Should look up image and description from Google sheet
-                      //  blocked by https://www.notion.so/riceapps/Launchpad-Wellbeing-2a92c630bc0a80948c0af3a12e73dde5?p=31c2c630bc0a80ba9d9fd2cc85ba23ff&pm=s
-                      imageSrc: "/rpc.jpg", // temporary image
-                      matchText: match.resource_location,
-                      title: match.resource_name,
-                      // description: response.match.descripition,
-                      description: "This is a test description. It can be very long sometimes so let's make sure it looks good!",
-                    },
+                    match: matchData,
                     sender: Sender.server,
                   },]);
 
-                setMatch({
-                  // TODO: Should look up image and description from Google sheet
-                  //  blocked by https://www.notion.so/riceapps/Launchpad-Wellbeing-2a92c630bc0a80948c0af3a12e73dde5?p=31c2c630bc0a80ba9d9fd2cc85ba23ff&pm=s
-                  imageSrc: "/ccd.jpg", // DEBUG
-                  title: match.resource_name,
-                  // TODO
-                  description: "This is a test description. We are going to make it very long because it should look good no matter the length of the description.", // DEBUG
-                });
+                setMatch(matchData);
                 setIsSessionActive(false);
               }
             } finally {
