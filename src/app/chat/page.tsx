@@ -96,20 +96,13 @@ export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
 
             try {
               const response = await matchKeywords(userText, historyMessages);
-              
-              
 
               if (response.match == null) {
                 // If there's no match, there's a follow-up question
-                if (!(response.follow_up_question) == null){
-                
-                }
-                const followUpId: string = response.follow_up_question
-                // console.log(followups[followUpId])
+                const followUpId: keyof typeof followups = response.follow_up_question
 
-
-                setMessages(prev => [...prev, {message: followups[followUpId  as keyof typeof followups], sender: Sender.server}]);
-                setHistoryMessages(prevMes => [...prevMes, "AI: " + followups[followUpId  as keyof typeof followups]])
+                setMessages(prev => [...prev, {message: followups[followUpId], sender: Sender.server}]);
+                setHistoryMessages(prevMes => [...prevMes, "AI: " + followups[followUpId]])
                 console.log(setHistoryMessages)
               } else {
                 setMessages(prev => [...prev, {
