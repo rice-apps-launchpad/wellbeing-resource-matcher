@@ -95,7 +95,7 @@ export default function ChatPage({isLaptop, setMatch}: ChatPageProps) {
         disabled={!isSessionActive}
         style={{cursor: isSessionActive ? 'text' : 'not-allowed', opacity: isSessionActive ? 1 : 0.6}}
 
-        className={"mt-5 mb-5 bg-white rounded-2xl border-[0.5px] border-[#9BA9B0] p-1 mr-5"}
+        className={"mt-5 mb-5 bg-white rounded-3xl border-[0.5px] border-[#9BA9B0] p-1.5 pl-3 mr-5"}
         placeholder={isSessionActive ? "Type your message..." : "Chat ended."}
         ref={chatInputRef}
         onKeyDown={async event => {
