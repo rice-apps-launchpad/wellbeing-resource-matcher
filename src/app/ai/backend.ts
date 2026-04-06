@@ -38,11 +38,13 @@ export async function matchKeywords(userInput: string, chatHistory: string[]) {
         type: "OBJECT",
         nullable: true,
         properties: {
-          resource_name: {type: "STRING"},
-          resource_location: {type: "STRING"},
-          contact_info: {type: "STRING"},
-          schedule_link: {type: "STRING"},
-          category: {type: "STRING"}
+          resource_name: { type: "STRING" },
+          resource_location: { type: "STRING" },
+          contact_info: { type: "STRING" },
+          schedule_link: { type: "STRING" },
+          category: { type: "STRING" },
+          // temporary
+          description: { type: "STRING" }
         }
       }
     },

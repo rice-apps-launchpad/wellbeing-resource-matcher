@@ -12,10 +12,12 @@ import followups from "@/app/ai/followups.json";
 // Indicator Typing
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import {TypingIndicator} from "@chatscope/chat-ui-kit-react";
+import BigPopup from "@/components/big-popup/big-popup";
+import BigPopupMobile from "@/components/big-popup/big-popup-mobile";
 
 interface ChatPageProps {
-  isLaptop: boolean,
-  setIsLaptop: Dispatch<SetStateAction<boolean>>,
+  isLaptop: boolean;
+  setIsLaptop: Dispatch<SetStateAction<boolean>>;
 }
 
 // TODO: isLaptop and setIsLaptop are currently unused, but will be used to
@@ -40,10 +42,12 @@ export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
     // https://stackoverflow.com/a/21067431
     const scrollView = scrollViewRef.current;
     if (!scrollView) return;
-    console.log(scrollView.scrollHeight)
-    console.log(scrollView.clientHeight)
-    console.log(scrollView.scrollTop + 1)
-    const isScrolledToBottom = scrollView.scrollHeight - scrollView.clientHeight <= scrollView.scrollTop + 1;
+    console.log(scrollView.scrollHeight);
+    console.log(scrollView.clientHeight);
+    console.log(scrollView.scrollTop + 1);
+    const isScrolledToBottom =
+      scrollView.scrollHeight - scrollView.clientHeight <=
+      scrollView.scrollTop + 1;
     if (isScrolledToBottom)
       scrollView.scrollTop = scrollView.scrollHeight - scrollView.clientHeight;
   }, [messages]);
@@ -58,9 +62,26 @@ export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
   return (
     <div className={"h-screen flex flex-col justify-end bg-[#E8E8E8] pb-5 pl-5"}>
       {/* This div holds all the messages */}
-      <div ref={scrollViewRef} className={"flex flex-col items-end gap-3 overflow-scroll pr-5"}>
-        {messages.map((message, index) => {
-          return (<MessageBubble message={message} key={index}/>)
+      <div
+        ref={scrollViewRef}
+        className={"flex flex-col items-end gap-3 overflow-scroll pr-5"}
+      >
+        {/* check if messages.map is a message or match*/}
+        {messages.map((chatMessage, index) => {
+          if (chatMessage.message != null) {
+            return <MessageBubble message={chatMessage} key={index}/>;
+          } else if (chatMessage.match != null) {
+            console.log("Hello")
+            console.log(chatMessage.match)
+            // We will only render the BigPopup inline in the chat if we are on mobile!
+            console.log("isLaptop" + isLaptop)
+            return !isLaptop ? <BigPopupMobile
+              key={index}
+              title={chatMessage.match.title}
+              description={chatMessage.match.description}
+              imageSrc={chatMessage.match?.imageSrc}
+            /> : null;
+          }
         })}
         {/* Typing indicator */}
         {isTyping && (
@@ -108,7 +129,17 @@ export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
                 setMessages(prev => [...prev, {
                   message: `Resource found: ${response.match.resource_name}`,
                   sender: Sender.server
-                }]);
+                },
+                  {
+                    match: {
+                      imageSrc: "/rpc.jpg", // temporary image
+                      matchText: response.match.resource_location,
+                      title: response.match.resource_name,
+                      // description: response.match.descripition,
+                      description: "This is a test description. It can be very long sometimes so let's make sure it looks good!",
+                    },
+                    sender: Sender.server,
+                  },]);
                 setIsSessionActive(false);
               }
             } finally {
@@ -128,5 +159,10 @@ export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
         </button>
       )}
     </div>
-  )
+  );
 }
+
+
+
+
+
