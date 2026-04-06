@@ -56,6 +56,7 @@ export default function ChatPage({isLaptop, setMatch}: ChatPageProps) {
     setHistoryMessages([]);
     setIsSessionActive(true); // Reset the lock if you clear the chat
     setIsTyping(false); // Reset typing indicator state when starting a new session
+    setMatch(undefined); // Clear match so desktop shows AllResources again
   };
 
   return (
