@@ -3,7 +3,7 @@ import MatchLayout from "@/app/match_screen/match_screen"
 import ChatPage from "@/app/chat/chat"
 import LandingContent from "@/app/landing/landing-content"
 import ResourcesView from "@/app/resources/resources-view"
-import {CSSProperties, useState, useEffect} from "react";
+import {CSSProperties, useEffect, useState} from "react";
 import {Match} from "@/data/chat-message"
 
 type Tab = 'ask' | 'resources';
@@ -50,16 +50,16 @@ export default function Page() {
   };
 
   return (
-    <div style={{ height: '100vh', width: '100vw', overflow: 'hidden' }}>
+    <div style={{position: 'fixed', inset: 0, overflow: 'hidden'}}>
 
       {/* ── Desktop layout ── */}
       {isLaptop && (
-        <div style={{ display: 'flex', height: '100%' }}>
+        <div style={{display: 'flex', height: '100%'}}>
           {/* Left panel */}
-          <div style={{ flex: '1 1 auto', minWidth: 0, overflow: 'auto' }}>
+          <div style={{flex: '1 1 auto', minWidth: 0, overflow: 'auto'}}>
             {match
               ? <MatchLayout {...match} />
-              : <LandingContent onExampleClick={handleExampleClick} showCategoryDecks={true} />
+              : <LandingContent onExampleClick={handleExampleClick} showCategoryDecks={true}/>
             }
           </div>
           {/* Chat panel */}
@@ -81,7 +81,7 @@ export default function Page() {
 
       {/* ── Mobile layout ── */}
       {!isLaptop && (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
 
           {/* Tab bar — hidden once chat has started */}
           {!hasChatStarted && (
@@ -102,8 +102,14 @@ export default function Page() {
 
           {/* Resources tab */}
           {!hasChatStarted && activeTab === 'resources' && (
-            <div style={{ flex: 1, overflow: 'auto', backgroundColor: 'var(--chat-panel-bg)' }}>
-              <ResourcesView />
+            <div style={{
+              flex: 1,
+              minHeight: 0,
+              overflowY: 'auto',
+              overflowX: 'hidden',
+              backgroundColor: 'var(--chat-panel-bg)'
+            }}>
+              <ResourcesView/>
             </div>
           )}
 
@@ -124,7 +130,7 @@ export default function Page() {
               onSessionTerminate={handleSessionTerminate}
               landingSlot={
                 !hasChatStarted
-                  ? <LandingContent onExampleClick={handleExampleClick} showCategoryDecks={false} />
+                  ? <LandingContent onExampleClick={handleExampleClick} showCategoryDecks={false}/>
                   : undefined
               }
             />

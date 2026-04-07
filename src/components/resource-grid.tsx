@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import SmallPopup from "@/components/small-popup/small-popup";
-import { callSheets } from "@/app/sheets/backend";
+import { callSheetsWithRows, FullResource } from "@/app/sheets/backend";
 
 const gridContainer: React.CSSProperties = {
   display: "grid",
@@ -14,13 +14,13 @@ const gridContainer: React.CSSProperties = {
 };
 
 export default function ResourceGrid() {
-  const [resources, setResources] = useState<{ title: string; descrip: string; image: string }[]>([]);
+  const [resources, setResources] = useState<FullResource[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function loadResources() {
       try {
-        const data = await callSheets();
+        const data = await callSheetsWithRows();
         setResources(data);
       } catch (error) {
         console.error("Failed to fetch resources:", error);
@@ -35,12 +35,13 @@ export default function ResourceGrid() {
 
   return (
     <div style={gridContainer}>
-      {resources.map((resource, index) => (
+      {resources.map((resource) => (
         <SmallPopup
-          key={index}
+          key={resource.row}
           image={resource.image.startsWith('/') ? resource.image : `/${resource.image}`}
-          title={resource.title}
-          descrip={resource.descrip}
+          resourceName={resource.resourceName}
+          description={resource.description}
+          website={resource.website || '#'}
         />
       ))}
     </div>

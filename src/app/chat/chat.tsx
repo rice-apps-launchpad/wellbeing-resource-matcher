@@ -5,11 +5,10 @@ automatically.
  */
 
 import {Dispatch, ReactNode, SetStateAction, useEffect, useRef, useState} from "react";
-import {ChatMessage, Sender} from "@/data/chat-message";
+import {ChatMessage, Match, Sender} from "@/data/chat-message";
 import MessageBubble from "@/components/message-bubble";
 import {matchKeywords} from "@/app/ai/backend";
-import {getResourceByRow, FullResource} from "@/app/sheets/backend";
-import {Match} from "@/data/chat-message"
+import {FullResource, getResourceByRow} from "@/app/sheets/backend";
 import followups from "@/app/ai/followups.json";
 // Indicator Typing
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
@@ -88,7 +87,15 @@ const styles = {
   },
 } as const;
 
-export default function ChatPage({isLaptop, setMatch, pendingQuestion, clearPendingQuestion, onFirstMessage, onSessionTerminate, landingSlot}: ChatPageProps) {
+export default function ChatPage({
+                                   isLaptop,
+                                   setMatch,
+                                   pendingQuestion,
+                                   clearPendingQuestion,
+                                   onFirstMessage,
+                                   onSessionTerminate,
+                                   landingSlot
+                                 }: ChatPageProps) {
   // A ref to the chat input field so that we can reference the value when we submit a message
   const chatInputRef = useRef<HTMLInputElement>(null);
   // A ref to the scroll view so that we can auto scroll to the bottom
@@ -141,7 +148,7 @@ export default function ChatPage({isLaptop, setMatch, pendingQuestion, clearPend
     <div style={styles.container}>
       {/* Landing slot: shown before any messages (mobile Ask tab) */}
       {landingSlot && messages.length === 0 && (
-        <div style={{ flex: '1 1 0', minHeight: 0, overflow: 'auto', paddingRight: '20px' }}>
+        <div style={{flex: '1 1 0', minHeight: 0, overflow: 'auto', paddingRight: '20px'}}>
           {landingSlot}
         </div>
       )}
@@ -155,52 +162,58 @@ export default function ChatPage({isLaptop, setMatch, pendingQuestion, clearPend
         }}
       >
         {/* Spacer pushes messages to the bottom when there are few of them */}
-        <div style={{ flex: 1 }} />
+        <div style={{flex: 1}}/>
         {/* check if messages.map is a message or match*/}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        {messages.map((chatMessage, index) => {
-          if (chatMessage.message != null) {
-            return <MessageBubble message={chatMessage} key={index}/>;
-          } else if (chatMessage.match != null) {
-            console.log("Hello")
-            console.log(chatMessage.match)
-            // We will only render the BigPopup inline in the chat if we are on mobile!
-            console.log("isLaptop" + isLaptop)
-            return !isLaptop ? (
-              <div key={index} style={{ display: "flex", flexDirection: "column", gap: "12px", width: "100%" }}>
-                <BigPopupMobile
-                  title={chatMessage.match.title}
-                  description={chatMessage.match.description}
-                  imageSrc={chatMessage.match?.imageSrc}
-                />
-                {chatMessage.match.otherMatches && chatMessage.match.otherMatches.length > 0 && (
-                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                    <p style={styles.alsoConsiderLabel}>Also consider:</p>
-                    {chatMessage.match.otherMatches.map((m, i) => (
-                      <div key={i} style={styles.otherMatchCard}>
-                        {m.imageSrc && (
-                          <div style={{ width: "100%", height: "100px", position: "relative" }}>
-                            <Image src={m.imageSrc} alt={m.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
+          {messages.map((chatMessage, index) => {
+            if (chatMessage.message != null) {
+              return <MessageBubble message={chatMessage} key={index}/>;
+            } else if (chatMessage.match != null) {
+              console.log("Hello")
+              console.log(chatMessage.match)
+              // We will only render the BigPopup inline in the chat if we are on mobile!
+              console.log("isLaptop" + isLaptop)
+              return !isLaptop ? (
+                <div key={index} style={{display: "flex", flexDirection: "column", gap: "12px", width: "100%"}}>
+                  <BigPopupMobile
+                    title={chatMessage.match.title}
+                    description={chatMessage.match.description}
+                    imageSrc={chatMessage.match?.imageSrc}
+                  />
+                  {chatMessage.match.otherMatches && chatMessage.match.otherMatches.length > 0 && (
+                    <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
+                      <p style={styles.alsoConsiderLabel}>Also consider:</p>
+                      {chatMessage.match.otherMatches.map((m, i) => (
+                        <div key={i} style={styles.otherMatchCard}>
+                          {m.imageSrc && (
+                            <div style={{width: "100%", height: "100px", position: "relative"}}>
+                              <Image src={m.imageSrc} alt={m.title}
+                                     style={{width: "100%", height: "100%", objectFit: "cover"}}/>
+                            </div>
+                          )}
+                          <div style={{padding: "12px 16px", color: "white"}}>
+                            <p style={{fontWeight: "bold", fontSize: "16px", margin: "0 0 4px 0"}}>{m.title}</p>
+                            <p style={{
+                              fontSize: "13px",
+                              opacity: 0.85,
+                              margin: 0,
+                              lineHeight: "1.4"
+                            }}>{m.description}</p>
                           </div>
-                        )}
-                        <div style={{ padding: "12px 16px", color: "white" }}>
-                          <p style={{ fontWeight: "bold", fontSize: "16px", margin: "0 0 4px 0" }}>{m.title}</p>
-                          <p style={{ fontSize: "13px", opacity: 0.85, margin: 0, lineHeight: "1.4" }}>{m.description}</p>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ) : null;
-          }
-        })}
-        {/* Typing indicator */}
-        {isTyping && (
-          <div style={styles.typingRow}>
-            <TypingIndicator content="Owl Resource Matcher is thinking" style={{backgroundColor: 'transparent'}}/>
-          </div>
-        )}
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : null;
+            }
+          })}
+          {/* Typing indicator */}
+          {isTyping && (
+            <div style={styles.typingRow}>
+              <TypingIndicator content="Owl Resource Matcher is thinking" style={{backgroundColor: 'transparent'}}/>
+            </div>
+          )}
         </div>
       </div>
 

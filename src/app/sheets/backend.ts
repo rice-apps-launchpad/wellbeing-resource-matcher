@@ -1,6 +1,6 @@
 'use server';
 
-import { google } from 'googleapis';
+import {google} from 'googleapis';
 
 const SPREADSHEET_ID = '1lKEbI5yVq2QeK6s7N5ft2FPUTW435XykQ7Ags1QZ62E';
 
@@ -129,7 +129,10 @@ export async function callSheetsGroupedByCategory(): Promise<{ category: string;
     if (!map.has(cat)) map.set(cat, []);
     map.get(cat)!.push(resource);
   }
-  return Array.from(map.entries()).map(([category, resources]) => ({ category, resources }));
+  const entries = Array.from(map.entries());
+  const named = entries.filter(([cat]) => cat.toLowerCase() !== 'other');
+  const other = entries.filter(([cat]) => cat.toLowerCase() === 'other');
+  return [...named, ...other].map(([category, resources]) => ({category, resources}));
 }
 
 /**
