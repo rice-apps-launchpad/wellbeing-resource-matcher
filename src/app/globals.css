@@ -3,15 +3,6 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --chat-panel-bg: #E8E8E8;
-  --ai-bubble-bg: #FFFFFF;
-  --ai-bubble-text: #000000;
-  --input-bg: #FFFFFF;
-  --input-border: #9BA9B0;
-  --match-screen-bg: #f8f9fa;
-  --section-heading: #00205B;
-  --resource-title: #7C7E7F;
-  --card-bg: #ffffff;
 }
 
 @theme inline {
@@ -25,15 +16,34 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
-    --chat-panel-bg: #1C1C1E;
-    --ai-bubble-bg: #3A3A3C;
-    --ai-bubble-text: #FFFFFF;
-    --input-bg: #2C2C2E;
-    --input-border: #555;
-    --match-screen-bg: #111111;
-    --section-heading: #6BA0D4;
-    --resource-title: #D0D0D0;
-    --card-bg: #2C2C2E;
+  }
+}
+
+@layer base {
+  :root {
+    --chat-panel-bg: #E8E8E8;
+    --ai-bubble-bg: #FFFFFF;
+    --ai-bubble-text: #000000;
+    --input-bg: #FFFFFF;
+    --input-border: #9BA9B0;
+    --match-screen-bg: #f8f9fa;
+    --section-heading: #00205B;
+    --resource-title: #7C7E7F;
+    --card-bg: #ffffff;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --chat-panel-bg: #1C1C1E;
+      --ai-bubble-bg: #3A3A3C;
+      --ai-bubble-text: #FFFFFF;
+      --input-bg: #2C2C2E;
+      --input-border: #555;
+      --match-screen-bg: #111111;
+      --section-heading: #6BA0D4;
+      --resource-title: #D0D0D0;
+      --card-bg: #2C2C2E;
+    }
   }
 }
 
