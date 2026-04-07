@@ -187,7 +187,7 @@ export default function ChatPage({
                         <div key={i} style={styles.otherMatchCard}>
                           {m.imageSrc && (
                             <div style={{width: "100%", height: "100px", position: "relative"}}>
-                              <Image src={m.imageSrc} alt={m.title}
+                              <Image src={m.imageSrc} alt={m.title} width={0} height={0} sizes="100vw"
                                      style={{width: "100%", height: "100%", objectFit: "cover"}}/>
                             </div>
                           )}
@@ -288,24 +288,24 @@ export default function ChatPage({
 
                 let finalMsg: string = ""
                 if (resource.resourceName) {
-                  finalMsg += "We think that the best match for you is " + resource.resourceName + ".\n"
+                  finalMsg += "We think that the best match for you is " + resource.resourceName + ".\n\n"
                 }
                 if (resource.location) {
-                  finalMsg += "You can visit them in person at: " + resource.location + ".\n"
+                  finalMsg += "You can visit them in person at: " + resource.location + ".\n\n"
                 }
                 if (resource.contactEmail && resource.contactPhone) {
-                  finalMsg += "You can contact them by email at: " + resource.contactEmail + " and by phone at: " + resource.contactPhone + ".\n"
+                  finalMsg += "You can contact them by email at: " + resource.contactEmail + " and by phone at: " + resource.contactPhone + ".\n\n"
                 } else if (resource.contactEmail) {
-                  finalMsg += "You can contact them by email at: " + resource.contactEmail + ".\n"
+                  finalMsg += "You can contact them by email at: " + resource.contactEmail + ".\n\n"
                 } else if (resource.contactPhone) {
-                  finalMsg += "You can contact them by phone at: " + resource.contactPhone + ".\n"
+                  finalMsg += "You can contact them by phone at: " + resource.contactPhone + ".\n\n"
                 }
                 if (resource.schedulingLink) {
-                  finalMsg += "Make an appointment at: " + resource.schedulingLink + ".\n"
+                  finalMsg += "Make an appointment at: " + resource.schedulingLink + ".\n\n"
                 }
 
                 setMessages(prevState => [...prevState,
-                  {message: finalMsg, sender: Sender.server},
+                  {message: finalMsg.trimEnd(), sender: Sender.server},
                   {
                     match: matchData,
                     sender: Sender.server,
