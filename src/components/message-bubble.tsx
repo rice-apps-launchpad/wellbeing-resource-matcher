@@ -40,6 +40,19 @@ interface MessageBubbleProps {
   message: ChatMessage;
 }
 
+const URL_REGEX = /(https?:\/\/[^\s]+)/g;
+
+function renderWithLinks(text: string) {
+  const parts = text.split(URL_REGEX);
+  return parts.map((part, i) =>
+    URL_REGEX.test(part) ? (
+      <a key={i} href={part} target="_blank" rel="noopener noreferrer" style={{color: "inherit", textDecoration: "underline"}}>
+        {part}
+      </a>
+    ) : part
+  );
+}
+
 export default function MessageBubble({ message }: MessageBubbleProps) {
   const isUser = message.sender === Sender.user;
 
@@ -56,7 +69,7 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
           ...(isUser ? styles.userBubble : styles.aiBubble),
         }}
       >
-        {message.message}
+        {message.message ? renderWithLinks(message.message) : message.message}
       </div>
     </div>
   );
