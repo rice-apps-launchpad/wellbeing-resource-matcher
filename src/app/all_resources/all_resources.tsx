@@ -4,7 +4,7 @@ import ResourceGrid from "@/components/resource-grid";
 
 const styles = {
   gridTitle: {
-    color: "#7C7E7F",
+    color: "var(--resource-title)",
     textAlign: "center",
     fontFamily: "Noto Serif",
     maxWidth: "900px",

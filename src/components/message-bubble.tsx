@@ -29,8 +29,8 @@ const styles = {
   },
 
   aiBubble: {
-    color: "black",
-    backgroundColor: "#FFFFFF",
+    color: "var(--ai-bubble-text)",
+    backgroundColor: "var(--ai-bubble-bg)",
     border: "1px solid #BEBFBF",
   },
 } as const;
