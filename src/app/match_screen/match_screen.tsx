@@ -44,7 +44,7 @@ export default function MatchLayout(match: Match) {
             flexDirection: "column",
             padding: "40px 20px",
             gap: "40px",
-            backgroundColor: "#f8f9fa",
+            backgroundColor: "var(--match-screen-bg)",
             minHeight: "100vh",
         }}>
             {/* Top Featured Match */}
@@ -59,7 +59,7 @@ export default function MatchLayout(match: Match) {
             {/* Other AI-recommended matches */}
             {match.otherMatches && match.otherMatches.length > 0 && (
                 <section style={{ maxWidth: "800px", margin: "0 auto", width: "100%" }}>
-                    <h2 style={{ marginBottom: "16px", fontSize: "20px", fontWeight: "bold", color: "#00205B" }}>
+                    <h2 style={{ marginBottom: "16px", fontSize: "20px", fontWeight: "bold", color: "var(--section-heading)" }}>
                         Also consider:
                     </h2>
                     <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
@@ -71,7 +71,7 @@ export default function MatchLayout(match: Match) {
             )}
 
             <section style={{ maxWidth: "1000px", margin: "0 auto", width: "100%" }}>
-                <h2 style={{ marginBottom: "20px", fontSize: "24px", fontWeight: "bold", color: "#00205B" }}>
+                <h2 style={{ marginBottom: "20px", fontSize: "24px", fontWeight: "bold", color: "var(--section-heading)" }}>
                     All other resources
                 </h2>
 

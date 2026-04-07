@@ -22,6 +22,68 @@ interface ChatPageProps {
   setMatch: Dispatch<SetStateAction<Match | undefined>>;
 }
 
+const styles = {
+  container: {
+    height: "100vh",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-end",
+    backgroundColor: "var(--chat-panel-bg)",
+    paddingTop: "20px",
+    paddingBottom: "20px",
+    paddingLeft: "20px",
+  },
+  messagesScroll: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-end",
+    gap: "12px",
+    overflow: "scroll",
+    paddingRight: "20px",
+  },
+  typingRow: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "flex-start",
+    marginBottom: "8px",
+  },
+  input: {
+    marginTop: "20px",
+    marginBottom: "20px",
+    marginRight: "20px",
+    backgroundColor: "var(--input-bg)",
+    color: "var(--foreground)",
+    borderRadius: "24px",
+    border: "0.5px solid var(--input-border)",
+    padding: "6px",
+    paddingLeft: "12px",
+    outline: "none",
+  },
+  restartButton: {
+    marginRight: "20px",
+    marginBottom: "20px",
+    padding: "8px",
+    backgroundColor: "#3B82F6",
+    color: "white",
+    borderRadius: "12px",
+    border: "none",
+    cursor: "pointer",
+  },
+  alsoConsiderLabel: {
+    color: "var(--section-heading)",
+    fontWeight: "bold",
+    fontSize: "14px",
+    margin: 0,
+  },
+  otherMatchCard: {
+    backgroundColor: "#00205B",
+    borderRadius: "16px",
+    overflow: "hidden",
+    display: "flex",
+    flexDirection: "column",
+  },
+} as const;
+
 export default function ChatPage({isLaptop, setMatch}: ChatPageProps) {
   // A ref to the chat input field so that we can reference the value when we submit a message
   const chatInputRef = useRef<HTMLInputElement>(null);
@@ -61,11 +123,11 @@ export default function ChatPage({isLaptop, setMatch}: ChatPageProps) {
   };
 
   return (
-    <div className={"h-screen flex flex-col justify-end bg-[#E8E8E8] pt-5 pb-5 pl-5"}>
+    <div style={styles.container}>
       {/* This div holds all the messages */}
       <div
         ref={scrollViewRef}
-        className={"flex flex-col items-end gap-3 overflow-scroll pr-5"}
+        style={styles.messagesScroll}
       >
         {/* check if messages.map is a message or match*/}
         {messages.map((chatMessage, index) => {
@@ -85,15 +147,9 @@ export default function ChatPage({isLaptop, setMatch}: ChatPageProps) {
                 />
                 {chatMessage.match.otherMatches && chatMessage.match.otherMatches.length > 0 && (
                   <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                    <p style={{ color: "#00205B", fontWeight: "bold", fontSize: "14px", margin: 0 }}>Also consider:</p>
+                    <p style={styles.alsoConsiderLabel}>Also consider:</p>
                     {chatMessage.match.otherMatches.map((m, i) => (
-                      <div key={i} style={{
-                        backgroundColor: "#00205B",
-                        borderRadius: "16px",
-                        overflow: "hidden",
-                        display: "flex",
-                        flexDirection: "column",
-                      }}>
+                      <div key={i} style={styles.otherMatchCard}>
                         {m.imageSrc && (
                           <div style={{ width: "100%", height: "100px", position: "relative" }}>
                             <Image src={m.imageSrc} alt={m.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
@@ -113,7 +169,7 @@ export default function ChatPage({isLaptop, setMatch}: ChatPageProps) {
         })}
         {/* Typing indicator */}
         {isTyping && (
-          <div className="w-full flex justify-start mb-2">
+          <div style={styles.typingRow}>
             <TypingIndicator content="Owl Resource Matcher is thinking" style={{backgroundColor: 'transparent'}}/>
           </div>
         )}
@@ -121,9 +177,7 @@ export default function ChatPage({isLaptop, setMatch}: ChatPageProps) {
 
       <input
         disabled={!isSessionActive}
-        style={{cursor: isSessionActive ? 'text' : 'not-allowed', opacity: isSessionActive ? 1 : 0.6}}
-
-        className={"mt-5 mb-5 bg-white rounded-3xl border-[0.5px] border-[#9BA9B0] p-1.5 pl-3 mr-5"}
+        style={{...styles.input, cursor: isSessionActive ? 'text' : 'not-allowed', opacity: isSessionActive ? 1 : 0.6}}
         placeholder={isSessionActive ? "Type your message..." : "Chat ended."}
         ref={chatInputRef}
         onKeyDown={async event => {
@@ -212,7 +266,7 @@ export default function ChatPage({isLaptop, setMatch}: ChatPageProps) {
       {!isSessionActive && (
         <button
           onClick={terminateSession}
-          className="mr-5 mb-5 p-2 bg-blue-500 text-white rounded-xl"
+          style={styles.restartButton}
         >
           Start New Search
         </button>
@@ -220,8 +274,3 @@ export default function ChatPage({isLaptop, setMatch}: ChatPageProps) {
     </div>
   );
 }
-
-
-
-
-
