@@ -148,9 +148,9 @@ export default function ChatPage({isLaptop, setMatch}: ChatPageProps) {
               const match = response.match;
 
               // If there is no match, there is a follow-up question
-              if (!match) {
+              if (match == undefined) {
                 // If there's no match, there should be a follow-up question
-                if (!response.follow_up_question) {
+                if (response.follow_up_question == undefined) {
                   throw new Error("No match nor follow-up question");
                 }
                 // Convert make sure AI provided ID exists in our followups JSON
@@ -169,7 +169,7 @@ export default function ChatPage({isLaptop, setMatch}: ChatPageProps) {
                   getResourceByRow(match.resource_row),
                   ...(response.other_matches ?? []).map(m => getResourceByRow(m.resource_row)),
                 ]);
-                if (!resource) {
+                if (resource == null) {
                   throw new Error(`Could not find resource at row ${match.resource_row}`);
                 }
 
