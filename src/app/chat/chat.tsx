@@ -286,14 +286,31 @@ export default function ChatPage({
                   otherMatches,
                 };
 
-                setMessages(prev => [...prev, {
-                  message: `Resource found: ${resource.resourceName}`,
-                  sender: Sender.server
-                },
+                let finalMsg: string = ""
+                if (resource.resourceName) {
+                  finalMsg += "We think that the best match for you is " + resource.resourceName + ".\n"
+                }
+                if (resource.location) {
+                  finalMsg += "You can visit them in person at: " + resource.location + ".\n"
+                }
+                if (resource.contactEmail && resource.contactPhone) {
+                  finalMsg += "You can contact them by email at: " + resource.contactEmail + " and by phone at: " + resource.contactPhone + ".\n"
+                } else if (resource.contactEmail) {
+                  finalMsg += "You can contact them by email at: " + resource.contactEmail + ".\n"
+                } else if (resource.contactPhone) {
+                  finalMsg += "You can contact them by phone at: " + resource.contactPhone + ".\n"
+                }
+                if (resource.schedulingLink) {
+                  finalMsg += "Make an appointment at: " + resource.schedulingLink + ".\n"
+                }
+
+                setMessages(prevState => [...prevState,
+                  {message: finalMsg, sender: Sender.server},
                   {
                     match: matchData,
                     sender: Sender.server,
-                  },]);
+                  }
+                ]);
 
                 setMatch(matchData);
                 setIsSessionActive(false);
