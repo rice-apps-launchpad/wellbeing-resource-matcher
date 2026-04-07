@@ -91,6 +91,7 @@ export async function matchKeywords(userInput: string, chatHistory: string[]): P
     You must ALWAYS return either a match or a follow_up_question. Never return a response with neither.
     1. If there is a clear match, set status to 'MATCH_FOUND', set match.resource_row to the row number from the database, and optionally include 1–3 other relevant resources in other_matches. Do not repeat the primary match in other_matches. Never set other_matches unless match is also set.
     2. Otherwise, set status to 'NEEDS_CLARIFICATION' and you MUST set follow_up_question to a valid ID (0–141) from the options below. Never leave follow_up_question unset when status is NEEDS_CLARIFICATION.
+    2a. If someone shares anything with key words "suicide, self-harm, cutting, dying, death, killing," etc, you MUST respond with follow_up_question ID -1. There are no exceptions to this rule.  
     ${JSON.stringify(followups)}
 
     Don't be afraid to ask multiple follow up questions. Ideally, you want to ask at least three questions! Never ask a duplicate follow-up question.

@@ -20,6 +20,7 @@ const styles = {
     borderRadius: "10px",
     padding: "8px",
     overflowWrap: "break-word",
+    whiteSpace: "pre-wrap",
   },
 
   userBubble: {
