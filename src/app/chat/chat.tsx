@@ -4,7 +4,7 @@ This will be the "chat" page for both desktop and mobile! It can take infinitely
 automatically.
  */
 
-import {Dispatch, SetStateAction, useEffect, useRef, useState} from "react";
+import {Dispatch, ReactNode, SetStateAction, useEffect, useRef, useState} from "react";
 import {ChatMessage, Sender} from "@/data/chat-message";
 import MessageBubble from "@/components/message-bubble";
 import {matchKeywords} from "@/app/ai/backend";
@@ -20,25 +20,29 @@ import Image from "next/image";
 interface ChatPageProps {
   isLaptop: boolean;
   setMatch: Dispatch<SetStateAction<Match | undefined>>;
+  pendingQuestion?: string;
+  clearPendingQuestion?: () => void;
+  onFirstMessage?: () => void;
+  onSessionTerminate?: () => void;
+  landingSlot?: ReactNode;
 }
 
 const styles = {
   container: {
-    height: "100vh",
+    height: "100%",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "flex-end",
     backgroundColor: "var(--chat-panel-bg)",
     paddingTop: "20px",
     paddingBottom: "20px",
     paddingLeft: "20px",
   },
   messagesScroll: {
+    flex: "1 1 0",
+    minHeight: 0,
     display: "flex",
     flexDirection: "column",
-    alignItems: "flex-end",
-    gap: "12px",
-    overflow: "scroll",
+    overflow: "auto",
     paddingRight: "20px",
   },
   typingRow: {
@@ -84,7 +88,7 @@ const styles = {
   },
 } as const;
 
-export default function ChatPage({isLaptop, setMatch}: ChatPageProps) {
+export default function ChatPage({isLaptop, setMatch, pendingQuestion, clearPendingQuestion, onFirstMessage, onSessionTerminate, landingSlot}: ChatPageProps) {
   // A ref to the chat input field so that we can reference the value when we submit a message
   const chatInputRef = useRef<HTMLInputElement>(null);
   // A ref to the scroll view so that we can auto scroll to the bottom
@@ -114,22 +118,46 @@ export default function ChatPage({isLaptop, setMatch}: ChatPageProps) {
       scrollView.scrollTop = scrollView.scrollHeight - scrollView.clientHeight;
   }, [messages]);
 
+  // Populate the input when a pending question is set (e.g. from example question chips)
+  useEffect(() => {
+    if (!pendingQuestion) return;
+    if (chatInputRef.current) {
+      chatInputRef.current.value = pendingQuestion;
+      chatInputRef.current.focus();
+    }
+    clearPendingQuestion?.();
+  }, [pendingQuestion]);
+
   const terminateSession = () => {
     setMessages([]);
     setHistoryMessages([]);
     setIsSessionActive(true); // Reset the lock if you clear the chat
     setIsTyping(false); // Reset typing indicator state when starting a new session
     setMatch(undefined); // Clear match so desktop shows AllResources again
+    onSessionTerminate?.();
   };
 
   return (
     <div style={styles.container}>
+      {/* Landing slot: shown before any messages (mobile Ask tab) */}
+      {landingSlot && messages.length === 0 && (
+        <div style={{ flex: '1 1 0', minHeight: 0, overflow: 'auto', paddingRight: '20px' }}>
+          {landingSlot}
+        </div>
+      )}
+
       {/* This div holds all the messages */}
       <div
         ref={scrollViewRef}
-        style={styles.messagesScroll}
+        style={{
+          ...styles.messagesScroll,
+          display: (landingSlot && messages.length === 0) ? 'none' : undefined,
+        }}
       >
+        {/* Spacer pushes messages to the bottom when there are few of them */}
+        <div style={{ flex: 1 }} />
         {/* check if messages.map is a message or match*/}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         {messages.map((chatMessage, index) => {
           if (chatMessage.message != null) {
             return <MessageBubble message={chatMessage} key={index}/>;
@@ -173,6 +201,7 @@ export default function ChatPage({isLaptop, setMatch}: ChatPageProps) {
             <TypingIndicator content="Owl Resource Matcher is thinking" style={{backgroundColor: 'transparent'}}/>
           </div>
         )}
+        </div>
       </div>
 
       <input
@@ -190,6 +219,7 @@ export default function ChatPage({isLaptop, setMatch}: ChatPageProps) {
 
             // "Submit" the message
             const userText = inputRef.value;
+            if (messages.length === 0) onFirstMessage?.();
             setMessages(prevState => [...prevState, {message: userText, sender: Sender.user}]);
             setHistoryMessages(prevMes => [...prevMes, "User: " + userText])
             inputRef.value = ""; // Clear input immediately

@@ -119,6 +119,20 @@ export async function getResourceByRow(rowNumber: number): Promise<FullResource 
 }
 
 /**
+ * Returns all resources grouped by category, used for the landing page carousels.
+ */
+export async function callSheetsGroupedByCategory(): Promise<{ category: string; resources: FullResource[] }[]> {
+  const all = await callSheetsWithRows();
+  const map = new Map<string, FullResource[]>();
+  for (const resource of all) {
+    const cat = resource.category || 'Other';
+    if (!map.has(cat)) map.set(cat, []);
+    map.get(cat)!.push(resource);
+  }
+  return Array.from(map.entries()).map(([category, resources]) => ({ category, resources }));
+}
+
+/**
  * Original function for displaying resource cards (title, website, image only).
  */
 export async function callSheets(): Promise<Resource[]> {
