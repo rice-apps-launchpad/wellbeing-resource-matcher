@@ -1,26 +1,68 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+    --background: #ffffff;
+    --foreground: #171717;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --font-sans: var(--font-geist-sans);
+    --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+    :root {
+        --background: #0a0a0a;
+        --foreground: #ededed;
+    }
+}
+
+@layer base {
+    :root {
+        --chat-panel-bg: #E8E8E8;
+        --ai-bubble-bg: #FFFFFF;
+        --ai-bubble-text: #000000;
+        --input-bg: #FFFFFF;
+        --input-border: #9BA9B0;
+        --match-screen-bg: #f8f9fa;
+        --section-heading: #00205B;
+        --resource-title: #7C7E7F;
+        --card-bg: #ffffff;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --chat-panel-bg: #1C1C1E;
+            --ai-bubble-bg: #3A3A3C;
+            --ai-bubble-text: #FFFFFF;
+            --input-bg: #2C2C2E;
+            --input-border: #555;
+            --match-screen-bg: #111111;
+            --section-heading: #6BA0D4;
+            --resource-title: #D0D0D0;
+            --card-bg: #2C2C2E;
+        }
+    }
+}
+
+html,
+body {
+    height: 100%;
+    overflow: hidden;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.hide-scrollbar {
+    scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
 }

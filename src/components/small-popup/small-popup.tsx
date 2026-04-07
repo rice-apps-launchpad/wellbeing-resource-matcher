@@ -1,87 +1,97 @@
+"use client";
+import { useState } from 'react';
 import Image from 'next/image';
-import {Inter, Noto_Serif} from 'next/font/google';
+import { Noto_Serif, Inter } from 'next/font/google';
 
-// https://nextjs.org/docs/app/getting-started/fonts
 const inter = Inter({ subsets: ['latin'] });
 const notoSerif = Noto_Serif({ subsets: ['latin'] });
 
-const styles = {
-  card: {
-    width: "100%",
-    borderRadius: "25px",
-    overflow: "hidden",
-    display: "flex",
-    flexDirection: "column",
-    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-    backgroundColor: "#00205B",
-  },
-
-  imageContainer: {
-    width: "100%",
-    aspectRatio: "3 / 1",
-    overflow: "hidden",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
-  },
-
-  image: {
-    objectFit: "cover",
-  },
-
-  textContainer: {
-    paddingTop: "20px",
-    paddingBottom: "30px",
-    paddingLeft: "30px",
-    paddingRight: "30px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "20px",
-  },
-
-  title: {
-    color: "white",
-    fontSize: "24px",
-    fontWeight: "bold",
-    lineHeight: "1.1",
-  },
-
-  description: {
-    color: "white",
-    fontSize: "15px",
-    textDecoration: "underline",
-  },
-} as const;
-
-
 interface SmallProps {
-    image: string;
-    title: string;
-    descrip: string;
+  image: string;
+  resourceName: string;
+  description: string;
+  website: string;
 }
 
-export default function SmallPopup({
-    image,
-    title,
-    descrip
-}: SmallProps){
+export default function SmallPopup({ image, resourceName, description, website }: SmallProps) {
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
-    <div style={styles.card}>
-      <div style={styles.imageContainer}>
-        <Image
-        src={image}
-        alt={title}
-        fill
-        style={styles.image} />
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        borderRadius: '25px',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: '#00205B',
+        cursor: 'pointer',
+        transition: 'all 0.3s ease',
+        transform: isHovered ? 'translateY(-8px)' : 'translateY(0)',
+        boxShadow: isHovered
+          ? '0 8px 20px rgba(0, 0, 0, 0.18)'
+          : '0 2px 8px rgba(0, 0, 0, 0.10)',
+      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {/* Image — fixed height so all cards are consistent */}
+      <div style={{ width: '100%', height: 130, position: 'relative', flexShrink: 0 }}>
+        <Image src={image} alt={resourceName} fill style={{ objectFit: 'cover' }} />
       </div>
 
-      <div style={styles.textContainer}>
-        <h2 className={notoSerif.className} style={styles.title}>{title}</h2>
-        <p className={inter.className} style={styles.description}>{descrip}</p>
+      {/* Content */}
+      <div style={{ padding: '16px 18px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+        <h2
+          className={notoSerif.className}
+          style={{ color: 'white', fontSize: '18px', fontWeight: 'bold', margin: '0 0 8px 0', lineHeight: 1.3 }}
+        >
+          {resourceName}
+        </h2>
+
+        <p
+          className={inter.className}
+          style={{
+            color: 'rgba(255,255,255,0.8)',
+            fontSize: '13px',
+            margin: 0,
+            lineHeight: 1.5,
+            overflow: 'hidden',
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+          }}
+        >
+          {description}
+        </p>
+
+        {/* Spacer pushes URL to bottom */}
+        <div style={{ flex: 1 }} />
+
+        {website && website !== '#' && (
+          <a
+            href={website}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={inter.className}
+            style={{
+              color: 'rgba(255,255,255,0.6)',
+              fontSize: '12px',
+              textDecoration: 'none',
+              marginTop: '12px',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              transition: 'color 0.2s ease',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,1)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.6)')}
+          >
+            {website}
+          </a>
+        )}
       </div>
     </div>
   );
 }
-
-
