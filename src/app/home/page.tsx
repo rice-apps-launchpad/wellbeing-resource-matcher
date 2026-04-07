@@ -40,7 +40,6 @@ export default function Page() {
 
   const handleExampleClick = (question: string) => {
     setPendingQuestion(question);
-    // Switch to Ask tab so the input is visible (mobile)
     setActiveTab('ask');
   };
 
@@ -49,95 +48,69 @@ export default function Page() {
     setActiveTab('ask');
   };
 
-  return (
-    <div style={{position: 'fixed', inset: 0, overflow: 'hidden'}}>
+  const showResourcesPanel = !isLaptop && !hasChatStarted && activeTab === 'resources';
 
-      {/* ── Desktop layout ── */}
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, overflow: 'hidden',
+      display: 'flex',
+      flexDirection: isLaptop ? 'row' : 'column',
+    }}>
+
+      {/* Desktop: left content panel */}
       {isLaptop && (
-        <div style={{display: 'flex', height: '100%'}}>
-          {/* Left panel */}
-          <div style={{flex: '1 1 auto', minWidth: 0, overflow: 'auto'}}>
-            {match
-              ? <MatchLayout {...match} />
-              : <LandingContent onExampleClick={handleExampleClick} showCategoryDecks={true}/>
-            }
-          </div>
-          {/* Chat panel */}
-          <div style={{
-            width: 400, minWidth: 400, maxWidth: 400, flex: '0 0 400px',
-            display: 'flex', flexDirection: 'column', overflow: 'hidden',
-          }}>
-            <ChatPage
-              isLaptop={true}
-              setMatch={setMatch}
-              pendingQuestion={pendingQuestion}
-              clearPendingQuestion={() => setPendingQuestion('')}
-              onFirstMessage={() => setHasChatStarted(true)}
-              onSessionTerminate={handleSessionTerminate}
-            />
-          </div>
+        <div style={{flex: '1 1 auto', minWidth: 0, overflow: 'auto'}}>
+          {match
+            ? <MatchLayout {...match} />
+            : <LandingContent onExampleClick={handleExampleClick} showCategoryDecks={true}/>
+          }
         </div>
       )}
 
-      {/* ── Mobile layout ── */}
-      {!isLaptop && (
-        <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
-
-          {/* Tab bar — hidden once chat has started */}
-          {!hasChatStarted && (
-            <div style={{
-              display: 'flex',
-              flexShrink: 0,
-              borderBottom: '1px solid var(--input-border)',
-              backgroundColor: 'var(--chat-panel-bg)',
-            }}>
-              <button style={tabBtnStyle(activeTab === 'ask')} onClick={() => setActiveTab('ask')}>
-                Ask
-              </button>
-              <button style={tabBtnStyle(activeTab === 'resources')} onClick={() => setActiveTab('resources')}>
-                Resources
-              </button>
-            </div>
-          )}
-
-          {/* Resources tab */}
-          {!hasChatStarted && activeTab === 'resources' && (
-            <div style={{
-              flex: 1,
-              minHeight: 0,
-              overflowY: 'auto',
-              overflowX: 'hidden',
-              backgroundColor: 'var(--chat-panel-bg)'
-            }}>
+      {/* Mobile: tab bar + resources, rendered above the chat in column flex */}
+      {!isLaptop && !hasChatStarted && (
+        <>
+          <div style={{
+            display: 'flex',
+            flexShrink: 0,
+            borderBottom: '1px solid var(--input-border)',
+            backgroundColor: 'var(--chat-panel-bg)',
+          }}>
+            <button style={tabBtnStyle(activeTab === 'ask')} onClick={() => setActiveTab('ask')}>Ask</button>
+            <button style={tabBtnStyle(activeTab === 'resources')} onClick={() => setActiveTab('resources')}>Resources</button>
+          </div>
+          {activeTab === 'resources' && (
+            <div style={{flex: 1, minHeight: 0, overflowY: 'auto', overflowX: 'hidden', backgroundColor: 'var(--chat-panel-bg)'}}>
               <ResourcesView/>
             </div>
           )}
-
-          {/* Ask tab / active chat — always mounted so ChatPage state is preserved */}
-          <div style={{
-            flex: 1,
-            minHeight: 0,
-            display: (!hasChatStarted && activeTab === 'resources') ? 'none' : 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden',
-          }}>
-            <ChatPage
-              isLaptop={false}
-              setMatch={setMatch}
-              pendingQuestion={pendingQuestion}
-              clearPendingQuestion={() => setPendingQuestion('')}
-              onFirstMessage={() => setHasChatStarted(true)}
-              onSessionTerminate={handleSessionTerminate}
-              landingSlot={
-                !hasChatStarted
-                  ? <LandingContent onExampleClick={handleExampleClick} showCategoryDecks={false}/>
-                  : undefined
-              }
-            />
-          </div>
-
-        </div>
+        </>
       )}
+
+      {/* Single ChatPage instance — always mounted so state is preserved across layout changes */}
+      <div style={{
+        ...(isLaptop
+          ? {width: 400, minWidth: 400, maxWidth: 400, flex: '0 0 400px'}
+          : {flex: 1, minHeight: 0}
+        ),
+        display: showResourcesPanel ? 'none' : 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+      }}>
+        <ChatPage
+          isLaptop={isLaptop}
+          setMatch={setMatch}
+          pendingQuestion={pendingQuestion}
+          clearPendingQuestion={() => setPendingQuestion('')}
+          onFirstMessage={() => setHasChatStarted(true)}
+          onSessionTerminate={handleSessionTerminate}
+          landingSlot={
+            !isLaptop && !hasChatStarted
+              ? <LandingContent onExampleClick={handleExampleClick} showCategoryDecks={false}/>
+              : undefined
+          }
+        />
+      </div>
 
     </div>
   );
