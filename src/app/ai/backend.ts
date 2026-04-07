@@ -47,7 +47,7 @@ export async function matchKeywords(userInput: string, chatHistory: string[]): P
         type: "OBJECT",
         description: "Required when status is MATCH_FOUND. Must be set to the best matching resource.",
         properties: {
-          resource_row: { type: "INTEGER" },
+          resource_row: {type: "INTEGER"},
         }
       },
       other_matches: {
@@ -57,7 +57,7 @@ export async function matchKeywords(userInput: string, chatHistory: string[]): P
         items: {
           type: "OBJECT",
           properties: {
-            resource_row: { type: "INTEGER" },
+            resource_row: {type: "INTEGER"},
           }
         }
       }
@@ -103,7 +103,6 @@ export async function matchKeywords(userInput: string, chatHistory: string[]): P
       responseJsonSchema: resourceSchema,
     },
   });
-
 
 
   if (response.text == undefined) {

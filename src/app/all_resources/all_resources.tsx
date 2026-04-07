@@ -26,7 +26,7 @@ export default function All_resources() {
         <b>Resource Matcher</b>
       </h1>
       <div style={styles.layoutWrapper}>
-        <ResourceGrid />
+        <ResourceGrid/>
       </div>
     </div>
   );

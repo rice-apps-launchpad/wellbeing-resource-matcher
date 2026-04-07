@@ -1,6 +1,6 @@
 'use server';
 
-import { google } from 'googleapis';
+import {google} from 'googleapis';
 
 const SPREADSHEET_ID = '1lKEbI5yVq2QeK6s7N5ft2FPUTW435XykQ7Ags1QZ62E';
 
@@ -116,6 +116,23 @@ export async function getResourceByRow(rowNumber: number): Promise<FullResource 
     console.error('Google Sheets API Error:', error.message);
     return null;
   }
+}
+
+/**
+ * Returns all resources grouped by category, used for the landing page carousels.
+ */
+export async function callSheetsGroupedByCategory(): Promise<{ category: string; resources: FullResource[] }[]> {
+  const all = await callSheetsWithRows();
+  const map = new Map<string, FullResource[]>();
+  for (const resource of all) {
+    const cat = resource.category || 'Other';
+    if (!map.has(cat)) map.set(cat, []);
+    map.get(cat)!.push(resource);
+  }
+  const entries = Array.from(map.entries());
+  const named = entries.filter(([cat]) => cat.toLowerCase() !== 'other');
+  const other = entries.filter(([cat]) => cat.toLowerCase() === 'other');
+  return [...named, ...other].map(([category, resources]) => ({category, resources}));
 }
 
 /**
