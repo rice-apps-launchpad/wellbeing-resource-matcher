@@ -8,13 +8,14 @@ import {Dispatch, SetStateAction, useEffect, useRef, useState} from "react";
 import {ChatMessage, Sender} from "@/data/chat-message";
 import MessageBubble from "@/components/message-bubble";
 import {matchKeywords} from "@/app/ai/backend";
-import {getResourceByRow} from "@/app/sheets/backend";
+import {getResourceByRow, FullResource} from "@/app/sheets/backend";
 import {Match} from "@/data/chat-message"
 import followups from "@/app/ai/followups.json";
 // Indicator Typing
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import {TypingIndicator} from "@chatscope/chat-ui-kit-react";
 import BigPopupMobile from "@/components/big-popup/big-popup-mobile";
+import Image from "next/image";
 
 interface ChatPageProps {
   isLaptop: boolean;
@@ -75,12 +76,39 @@ export default function ChatPage({isLaptop, setMatch}: ChatPageProps) {
             console.log(chatMessage.match)
             // We will only render the BigPopup inline in the chat if we are on mobile!
             console.log("isLaptop" + isLaptop)
-            return !isLaptop ? <BigPopupMobile
-              key={index}
-              title={chatMessage.match.title}
-              description={chatMessage.match.description}
-              imageSrc={chatMessage.match?.imageSrc}
-            /> : null;
+            return !isLaptop ? (
+              <div key={index} style={{ display: "flex", flexDirection: "column", gap: "12px", width: "100%" }}>
+                <BigPopupMobile
+                  title={chatMessage.match.title}
+                  description={chatMessage.match.description}
+                  imageSrc={chatMessage.match?.imageSrc}
+                />
+                {chatMessage.match.otherMatches && chatMessage.match.otherMatches.length > 0 && (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <p style={{ color: "#00205B", fontWeight: "bold", fontSize: "14px", margin: 0 }}>Also consider:</p>
+                    {chatMessage.match.otherMatches.map((m, i) => (
+                      <div key={i} style={{
+                        backgroundColor: "#00205B",
+                        borderRadius: "16px",
+                        overflow: "hidden",
+                        display: "flex",
+                        flexDirection: "column",
+                      }}>
+                        {m.imageSrc && (
+                          <div style={{ width: "100%", height: "100px", position: "relative" }}>
+                            <Image src={m.imageSrc} alt={m.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                          </div>
+                        )}
+                        <div style={{ padding: "12px 16px", color: "white" }}>
+                          <p style={{ fontWeight: "bold", fontSize: "16px", margin: "0 0 4px 0" }}>{m.title}</p>
+                          <p style={{ fontSize: "13px", opacity: 0.85, margin: 0, lineHeight: "1.4" }}>{m.description}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : null;
           }
         })}
         {/* Typing indicator */}
@@ -120,9 +148,9 @@ export default function ChatPage({isLaptop, setMatch}: ChatPageProps) {
               const match = response.match;
 
               // If there is no match, there is a follow-up question
-              if (!match) {
+              if (match == undefined) {
                 // If there's no match, there should be a follow-up question
-                if (!response.follow_up_question) {
+                if (response.follow_up_question == undefined) {
                   throw new Error("No match nor follow-up question");
                 }
                 // Convert make sure AI provided ID exists in our followups JSON
@@ -137,16 +165,28 @@ export default function ChatPage({isLaptop, setMatch}: ChatPageProps) {
                 console.log(setHistoryMessages)
               } else {
                 // Look up the full resource data from the Google Sheet by row number
-                const resource = await getResourceByRow(match.resource_row);
-                if (!resource) {
+                const [resource, ...otherMatchResources] = await Promise.all([
+                  getResourceByRow(match.resource_row),
+                  ...(response.other_matches ?? []).map(m => getResourceByRow(m.resource_row)),
+                ]);
+                if (resource == null) {
                   throw new Error(`Could not find resource at row ${match.resource_row}`);
                 }
+
+                const otherMatches: Match[] = (otherMatchResources as (FullResource | null)[])
+                  .filter((r): r is FullResource => r !== null)
+                  .map(r => ({
+                    imageSrc: "/" + r.image || "/rpc.jpg",
+                    title: r.resourceName,
+                    description: r.description,
+                  }));
 
                 const matchData: Match = {
                   imageSrc: "/" + resource.image || "/rpc.jpg", // Fallback image
                   matchText: resource.location,
                   title: resource.resourceName,
                   description: resource.description,
+                  otherMatches,
                 };
 
                 setMessages(prev => [...prev, {

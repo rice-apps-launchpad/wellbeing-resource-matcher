@@ -20,4 +20,5 @@ export interface Match {
   matchText?: string;
   title: string;
   description: string;
+  otherMatches?: Match[];
 }

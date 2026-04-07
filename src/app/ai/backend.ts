@@ -16,6 +16,9 @@ export type MatchResult = {
   match?: {
     resource_row: number;
   };
+  other_matches?: {
+    resource_row: number;
+  }[];
 };
 
 export async function matchKeywords(userInput: string, chatHistory: string[]): Promise<MatchResult> {
@@ -37,13 +40,25 @@ export async function matchKeywords(userInput: string, chatHistory: string[]): P
       },
       follow_up_question: {
         type: "INTEGER",
-        description: "The ID of the specific question to ask the user if status is NEEDS_CLARIFICATION",
+        description: "Required when status is NEEDS_CLARIFICATION. Must be set to a valid ID (0–141) from the follow-up questions list. Do NOT omit this when status is NEEDS_CLARIFICATION.",
         nullable: true,
       },
       match: {
         type: "OBJECT",
+        description: "Required when status is MATCH_FOUND. Must be set to the best matching resource.",
         properties: {
           resource_row: { type: "INTEGER" },
+        }
+      },
+      other_matches: {
+        type: "ARRAY",
+        description: "Optional secondary matches. ONLY include this field when status is MATCH_FOUND and a primary match is set. Never populate other_matches without also setting match.",
+        nullable: true,
+        items: {
+          type: "OBJECT",
+          properties: {
+            resource_row: { type: "INTEGER" },
+          }
         }
       }
     },
@@ -71,9 +86,11 @@ export async function matchKeywords(userInput: string, chatHistory: string[]): P
     User Input: ${userInput}
 
     Instructions:
-    You should try to match the user's needs to the best resource available at Rice University.
-    1. If there is a clear match, choose the best resource and set status to 'MATCH_FOUND'. Set match.resource_row to the row number of the matched resource from the database below.
-    2. If you think you need more details, set status to 'NEEDS_CLARIFICATION' and select the most appropriate ID (0–140) from the following options for follow-up questions:
+    You are a Rice University wellbeing resource matcher. Your only job is to help users find relevant Rice University resources.
+    If the user says something unrelated (e.g. greetings, small talk), treat it as if they need help but haven't shared details yet — ask a clarifying question.
+    You must ALWAYS return either a match or a follow_up_question. Never return a response with neither.
+    1. If there is a clear match, set status to 'MATCH_FOUND', set match.resource_row to the row number from the database, and optionally include 1–3 other relevant resources in other_matches. Do not repeat the primary match in other_matches. Never set other_matches unless match is also set.
+    2. Otherwise, set status to 'NEEDS_CLARIFICATION' and you MUST set follow_up_question to a valid ID (0–141) from the options below. Never leave follow_up_question unset when status is NEEDS_CLARIFICATION.
     ${JSON.stringify(followups)}
 
     Don't be afraid to ask multiple follow up questions. Ideally, you want to ask at least three questions! Never ask a duplicate follow-up question.
@@ -89,7 +106,7 @@ export async function matchKeywords(userInput: string, chatHistory: string[]): P
 
 
 
-  if (!response.text) {
+  if (response.text == undefined) {
     throw new Error("AI did not respond :(");
   }
 
