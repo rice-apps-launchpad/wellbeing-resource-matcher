@@ -85,6 +85,17 @@ const styles = {
     display: "flex",
     flexDirection: "column",
   },
+  errorNotice: {
+    color: "#854d0e",
+    backgroundColor: "#fef9c3",
+    border: "1px solid #fde047",
+    borderRadius: "8px",
+    padding: "8px 12px",
+    marginRight: "20px",
+    marginBottom: "4px",
+    fontSize: "13px",
+    alignSelf: "flex-start",
+  },
 } as const;
 
 export default function ChatPage({
@@ -108,6 +119,8 @@ export default function ChatPage({
   const [isTyping, setIsTyping] = useState(false);
   // isSessionActive is true if a current chat is ongoing, false if a match is found
   const [isSessionActive, setIsSessionActive] = useState(true);
+  // errorMessage is shown when the AI response fails
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // When `messages` changes, we might need to scroll to bottom
   // TODO: I don't think this is currently working!
@@ -140,6 +153,7 @@ export default function ChatPage({
     setHistoryMessages([]);
     setIsSessionActive(true); // Reset the lock if you clear the chat
     setIsTyping(false); // Reset typing indicator state when starting a new session
+    setErrorMessage(null);
     setMatch(undefined); // Clear match so desktop shows AllResources again
     onSessionTerminate?.();
   };
@@ -217,6 +231,12 @@ export default function ChatPage({
         </div>
       </div>
 
+      {errorMessage && (
+        <p style={styles.errorNotice}>
+          {errorMessage}
+        </p>
+      )}
+
       <input
         disabled={!isSessionActive}
         style={{...styles.input, cursor: isSessionActive ? 'text' : 'not-allowed', opacity: isSessionActive ? 1 : 0.6}}
@@ -232,6 +252,7 @@ export default function ChatPage({
 
             // "Submit" the message
             const userText = inputRef.value;
+            setErrorMessage(null);
             if (messages.length === 0) onFirstMessage?.();
             setMessages(prevState => [...prevState, {message: userText, sender: Sender.user}]);
             setHistoryMessages(prevMes => [...prevMes, "User: " + userText])
@@ -315,6 +336,8 @@ export default function ChatPage({
                 setMatch(matchData);
                 setIsSessionActive(false);
               }
+            } catch {
+              setErrorMessage("Something went wrong, please try again");
             } finally {
               // Stop typing
               setIsTyping(false);
