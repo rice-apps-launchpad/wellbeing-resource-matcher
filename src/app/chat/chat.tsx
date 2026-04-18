@@ -240,7 +240,7 @@ export default function ChatPage({
       <input
         disabled={!isSessionActive}
         style={{...styles.input, cursor: isSessionActive ? 'text' : 'not-allowed', opacity: isSessionActive ? 1 : 0.6}}
-        placeholder={isSessionActive ? "Type your message..." : "Chat ended."}
+        placeholder={isSessionActive ? "Describe your current needs..." : "Chat ended."}
         ref={chatInputRef}
         onKeyDown={async event => {
           if (event.key === "Enter") {
