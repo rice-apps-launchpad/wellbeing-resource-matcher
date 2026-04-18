@@ -5,8 +5,6 @@ import ChatPage from "@/app/chat/page"
 import {useState, useEffect} from "react";
 
 export default function Page() {
-  // new for laptop-mobile screen changing
-  // set to false initially -> if screen detects a laptop view-> switch
   const [isLaptop, setLaptop] = useState(false)
 
   useEffect(() => {

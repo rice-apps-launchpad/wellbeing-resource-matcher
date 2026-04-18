@@ -13,6 +13,7 @@ import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import {TypingIndicator} from "@chatscope/chat-ui-kit-react";
 import BigPopup from "@/components/big-popup/big-popup";
 import BigPopupMobile from "@/components/big-popup/big-popup-mobile";
+import MobileScreen from "@/components/small-popup/mobile-screen"; 
 
 interface ChatPageProps {
   isLaptop: boolean;
@@ -34,6 +35,16 @@ export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
   const [isTyping, setIsTyping] = useState(false);
   // isSessionActive is true if a current chat is ongoing, false if a match is found
   const [isSessionActive, setIsSessionActive] = useState(true);
+  // isMobileScreen is true when the user is in mobile view, false if isLaptop is true
+  const [isMobileScreen, setMobileScreen] = useState(false)
+
+  {/* This section is for the mobile homescreen pop up*/}
+  useEffect(() => {
+    if (!isLaptop) {
+      setMobileScreen(true);
+    }
+  }, [isLaptop]); // unsure of this part
+
 
   // When `messages` changes, we might need to scroll to bottom
   // TODO: I don't think this is currently working!
@@ -60,6 +71,11 @@ export default function ChatPage({isLaptop, setIsLaptop}: ChatPageProps) {
 
   return (
     <div className={"h-screen flex flex-col justify-end bg-[#E8E8E8] pb-5 pl-5"}>
+    {/* This section is for the mobile homescreen*/}
+    {!isLaptop && messages.length === 0 && isMobileScreen && (
+      <MobileScreen />
+    )}
+
       {/* This div holds all the messages */}
       <div
         ref={scrollViewRef}
