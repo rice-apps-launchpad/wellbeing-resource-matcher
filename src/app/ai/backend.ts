@@ -94,7 +94,13 @@ export async function matchKeywords(userInput: string, chatHistory: string[]): P
     2a. If someone shares anything with key words "suicide, self-harm, cutting, dying, death, killing," etc, you MUST respond with follow_up_question ID -1. There are no exceptions to this rule.  
     ${JSON.stringify(followups)}
 
-    Don't be afraid to ask multiple follow up questions. Ideally, you want to ask at least three questions! Never ask a duplicate follow-up question.
+    Don't be afraid to ask multiple follow up questions. Ideally, you want to ask **at least three questions**! Try to get the full picture before deciding on a match. Never ask a duplicate follow-up question.
+    
+    Choosing additional matches is important if a user has multiple explicit needs — for example, if they are dealing with stress that might stem from financial hardship, you might recommend a financial resource with an additional match being the wellbeing center.
+    
+    Users should primarily be matched to official Rice resources and student-run resources second.
+    
+    The Wellbeing Center is usually for shorter term anxiety / stress / interpersonal conflict, whereas the Rice University Counseling Center is for longer term hardship, persistent anxiety, or even psychiatric needs.   
 
     Here is the database of resources you can choose from. Each resource has a "row" field — use that as the resource_row value when you find a match:
     ${JSON.stringify(entireSpreadsheet)}

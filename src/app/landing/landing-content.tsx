@@ -13,10 +13,10 @@ const CATEGORY_EXAMPLES = [
     label: 'Academic',
     icon: '🎓',
     questions: [
-      'How do I build a 4-year academic plan?',
+      'I need help in building a 4-year academic plan.',
       'Where can I get tutoring for my classes?',
-      'I need help with course selection',
-      'I\'m struggling with a specific subject',
+      'I need help with course selection.',
+      'I\'m struggling with a specific subject.',
     ],
   },
   {
@@ -24,18 +24,18 @@ const CATEGORY_EXAMPLES = [
     icon: '💚',
     questions: [
       'Where can I get mental health counseling?',
-      'I\'m struggling with stress and anxiety',
-      'I need someone to talk to',
-      'I\'m having trouble sleeping due to anxiety',
+      'I\'m struggling with stress and anxiety.',
+      'I need someone to talk to.',
+      'I\'m having trouble sleeping due to anxiety.',
     ],
   },
   {
     label: 'Financial',
     icon: '💰',
     questions: [
-      'I need help with financial aid',
+      'I need help with financial aid.',
       'Where can I find scholarships at Rice?',
-      'I\'m struggling to pay for textbooks',
+      'I\'m struggling to pay for textbooks.',
       'How do I apply for emergency funding?',
     ],
   },
@@ -44,7 +44,7 @@ const CATEGORY_EXAMPLES = [
     icon: '🎉',
     questions: [
       'How do I get involved in clubs and activities?',
-      'I need help adjusting to campus life',
+      'I need help adjusting to campus life.',
       'Where can I find student organizations?',
     ],
   },
@@ -52,9 +52,9 @@ const CATEGORY_EXAMPLES = [
     label: 'Tech Support',
     icon: '💻',
     questions: [
-      'I need help with my laptop or campus tech',
+      'I need help with my laptop or campus tech.',
       'How do I connect to campus Wi-Fi?',
-      'I\'m having trouble with my Rice account',
+      'I\'m having trouble with my Rice account.',
     ],
   },
   {
@@ -70,7 +70,7 @@ const CATEGORY_EXAMPLES = [
 
 // ── Flat example questions for mobile ────────────────────────────────────────
 const MOBILE_EXAMPLE_QUESTIONS = [
-  'How do I build a 4-year academic plan?',
+  'I need help in building a 4-year academic plan.',
   'Where can I get mental health counseling?',
   'I need help with financial aid.',
   'How do I get tutoring for my classes?',
@@ -113,7 +113,7 @@ export default function LandingContent({onExampleClick, showCategoryDecks = fals
           lineHeight: 1.1,
         }}
       >
-        What's on your mind?
+        What can we help you with?
       </h1>
       <p style={{
         color: 'var(--resource-title)',
@@ -123,6 +123,8 @@ export default function LandingContent({onExampleClick, showCategoryDecks = fals
         maxWidth: 500,
       }}>
         Tell us what you need, and we'll match you with the right Rice resource.
+
+        Not sure what to ask? See some examples below:
       </p>
 
       {/* ── Desktop: Claude-style category pills ── */}
